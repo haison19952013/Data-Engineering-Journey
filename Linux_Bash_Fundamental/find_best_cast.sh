@@ -17,9 +17,6 @@ csvcut -d $'\t' -c 7 "$temp_file" | tail -n +2 | tr ' ' '_' | tr '|' ' ' | tr ' 
     sort "$output_file" | uniq -c | sort -nr | awk '{print $1 " " $2}' | head -n 1;
 } > "$output_file.tmp" && mv "$output_file.tmp" "$output_file"
 
-
-# echo "Best director: $best_director" > "$output_file"
-
 # # Cleanup temporary file
 rm "$temp_file"
 

@@ -4,7 +4,6 @@ input_file="tmdb-movies.csv"
 output_file="filtered-tmdb-movies.csv"
 
 # Temporary file to hold processed CSV
-# temp_file="temp.csv"
 temp_file=$(mktemp)
 
 # Convert CSV to a tab-separated format (TSV) to handle embedded commas correctly

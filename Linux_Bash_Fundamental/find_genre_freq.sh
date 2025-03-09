@@ -18,8 +18,6 @@ csvcut -d $'\t' -c 14 "$temp_file" | tail -n +2 | tr ' ' '_' | tr '|' ' ' | tr '
 } > "$output_file.tmp" && mv "$output_file.tmp" "$output_file"
 
 
-# echo "Best director: $best_director" > "$output_file"
-
 # # Cleanup temporary file
 rm "$temp_file"
 
