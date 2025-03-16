@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Data folders
+Tiki_Product_Crawling_Python/data/
+
 # C extensions
 *.so
 
