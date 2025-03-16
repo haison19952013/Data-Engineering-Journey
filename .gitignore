@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Data folders
-Tiki_Product_Crawling_Python/data/
+Le_Son_LV1_project_02_Tiki_Product_Crawling_Python/data/
 
 # C extensions
 *.so
