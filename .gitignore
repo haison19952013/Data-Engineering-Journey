@@ -3,8 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Data folders
-Le_Son_LV1_project_02_Tiki_Product_Crawling_Python/data/
+# Data files
+*.json
+
+# .init files
+*.ini
 
 # C extensions
 *.so
