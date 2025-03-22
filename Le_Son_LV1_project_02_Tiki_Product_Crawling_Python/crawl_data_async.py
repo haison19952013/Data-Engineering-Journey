@@ -69,7 +69,7 @@ def main():
         with open(file_name, 'w', encoding='utf-8') as f:
             json.dump(json_list, f, ensure_ascii=False, indent=4)
             print(f'Saved data to {file_name}')
-        break #  Comment this if you want to download all data
+        # break #  Comment this if you want to download all data
 
 if __name__ == '__main__':
     main()
