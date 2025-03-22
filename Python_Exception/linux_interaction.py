@@ -4,10 +4,6 @@ def linux_interaction():
         raise RuntimeError("Function can only run on Linux systems.")
     print("Doing Linux things.")
 
-# ...
-
-# ...
-
 try:
     linux_interaction()
 finally:
