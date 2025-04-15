@@ -1,64 +1,19 @@
-import json
+#!/usr/bin/env python3
+# countasync.py
+
 import asyncio
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig
-from crawl4ai.extraction_strategy import JsonXPathExtractionStrategy
 
-async def extract_crypto_prices_xpath():
-    # 1. Minimal dummy HTML with some repeating rows
-    dummy_html = """
-    <html>
-      <body>
-        <div class='crypto-row'>
-          <h2 class='coin-name'>Bitcoin</h2>
-          <span class='coin-price'>$28,000</span>
-        </div>
-        <div class='crypto-row'>
-          <h2 class='coin-name'>Ethereum</h2>
-          <span class='coin-price'>$1,800</span>
-        </div>
-      </body>
-    </html>
-    """
+async def count():
+    print("One")
+    await asyncio.sleep(1)
+    print("Two")
 
-    # 2. Define the JSON schema (XPath version)
-    schema = {
-        "name": "Crypto Prices via XPath",
-        "baseSelector": "//div[@class='crypto-row']",
-        "fields": [
-            {
-                "name": "coin_name",
-                "selector": ".//h2[@class='coin-name']",
-                "type": "text"
-            },
-            {
-                "name": "price",
-                "selector": ".//span[@class='coin-price']",
-                "type": "text"
-            }
-        ]
-    }
+async def main():
+    await asyncio.gather(count(), count(), count())
 
-    # 3. Place the strategy in the CrawlerRunConfig
-    config = CrawlerRunConfig(
-        extraction_strategy=JsonXPathExtractionStrategy(schema, verbose=True)
-    )
-
-    # 4. Use raw:// scheme to pass dummy_html directly
-    raw_url = f"raw://{dummy_html}"
-
-    async with AsyncWebCrawler(verbose=True) as crawler:
-        result = await crawler.arun(
-            url=raw_url,
-            config=config
-        )
-
-        if not result.success:
-            print("Crawl failed:", result.error_message)
-            return
-
-        data = json.loads(result.extracted_content)
-        print(f"Extracted {len(data)} coin rows")
-        if data:
-            print("First item:", data[0])
-
-asyncio.run(extract_crypto_prices_xpath())
+if __name__ == "__main__":
+    import time
+    s = time.perf_counter()
+    asyncio.run(main())
+    elapsed = time.perf_counter() - s
+    print(f"{__file__} executed in {elapsed:0.2f} seconds.")
