@@ -6,11 +6,11 @@ import IP2Location
 import pandas as pd
 import os
 from datetime import datetime
+from crawl_tool import crawl_prod_name
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 log_filename = f"logs/{timestamp}_ETL.log"
 logger = Logger(log_filename)
-
 
 class MongoDB_ETL_Base:
     def __init__(self):
@@ -208,18 +208,74 @@ class Product_ETL(MongoDB_ETL_Base):
     def load(self):
         pass
 
-    def transform(self):
-        pass
+    @logger.log_errors(logger)
+    def transform(
+        self,
+        input_dir="data",
+        input_prefix="prod_batch_",
+        output_prefix="prod_url_batch_",
+        skip_exist=True,
+    ):
+
+        for filename in sorted(os.listdir(input_dir)):
+            if filename.startswith(input_prefix) and filename.endswith(".csv"):
+                input_path = os.path.join(input_dir, filename)
+                output_filename = filename.replace(input_prefix, output_prefix)
+                output_path = os.path.join(input_dir, output_filename)
+
+                if skip_exist:
+                    if os.path.exists(output_path):
+                        logger.info(
+                            f"Skipping already processed file: {output_filename}"
+                        )
+                        continue
+
+                self.transform_batch(input_path, output_path)
+
+    @logger.log_errors(logger)
+    def transform_batch(self, input_path, output_path):
+        def update_url(text):
+            text_split = text.split('.html')
+            return text_split[0] + '.html'
+            # for i in text_split:
+            #     if '.html' in i:
+            #         return 'https://www.glamira.com/' + i.split('.html')[0] + '.html'
+
+        def wrangle(df):
+            df = df.dropna()
+            fmt_condition = df['current_url'].str.startswith(r'https://www.glamira.')
+            product_info_condition = df['current_url'].str.contains(r'.html')
+            df = df[fmt_condition & product_info_condition]
+            df['current_url'] = df['current_url'].apply(lambda x: x.split('?')[0])
+            df['current_url'] = df['current_url'].apply(update_url)
+            df = df.drop_duplicates()
+            return df
+        logger.info(f"Processing: {input_path}")
+        df = pd.read_csv(input_path)
+        output_df = wrangle(df)
+        # Crawl product name
+        output_df = crawl_prod_name(output_df, batch_size = 10_000)
+        output_df.to_csv(output_path, index=False)
+        logger.info(f"Saved transformed data to {output_path}")
 
     def run(self):
         self.conn_db()
         self.extract(batch_size=500_000, output_prefix="prod_batch")
-        self.transform()
+        self.transform(input_dir="data",
+            input_prefix="prod_batch_",
+            output_prefix="prod_url_batch_",
+            skip_exist=True,)
         self.load()
-
 
 if __name__ == "__main__":
     # ip_etl = IP_Location_ETL()
     # ip_etl.run()
     prod_etl = Product_ETL()
-    prod_etl.run()
+    prod_etl.transform(skip_exist = False)
+    # prod_etl.run()
+
+# Code to temporarily solve the incorrect format csv
+# import pandas as pd
+# import ast
+# df_parsed = df['_id'].apply(ast.literal_eval)
+# df_cleaned = pd.DataFrame(df_parsed.tolist())
