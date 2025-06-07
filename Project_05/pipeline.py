@@ -254,7 +254,7 @@ class Product_ETL(MongoDB_ETL_Base):
         df = pd.read_csv(input_path)
         output_df = wrangle(df)
         # Crawl product name
-        output_df = crawl_prod_name(output_df, batch_size = 10_000)
+        output_df = crawl_prod_name(output_df)
         output_df.to_csv(output_path, index=False)
         logger.info(f"Saved transformed data to {output_path}")
 
@@ -271,7 +271,7 @@ if __name__ == "__main__":
     # ip_etl = IP_Location_ETL()
     # ip_etl.run()
     prod_etl = Product_ETL()
-    prod_etl.transform(skip_exist = False)
+    prod_etl.transform(skip_exist = False, input_dir="data")
     # prod_etl.run()
 
 # Code to temporarily solve the incorrect format csv
