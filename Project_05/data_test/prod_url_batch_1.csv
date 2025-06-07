@@ -1,0 +1,4 @@
+name,language_code,status_code,method,product_id,url
+Engagement Ring Lucetta,en-AE,playwright_success,playwright,100000,https://www.glamira.ae/glamira-ring-lucetta.html
+Men's Ring Alvand,en-IE,200,aiohttp,101721,https://www.glamira.ie/glamira-ring-alvand.html
+Colgante de Mujer Eberta,es-CL,playwright_success,playwright,100032,https://www.glamira.cl/glamira-pendant-eberta.html
