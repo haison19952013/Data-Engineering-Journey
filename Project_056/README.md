@@ -390,3 +390,6 @@ mongoexport --db reports --collection summary --out summary.json
 * [ ] Duplicates
 * [ ] Nested field completeness (`option`)
 * [ ] Exported for offline profiling (optional)
+
+# 
+`gcloud auth application-default login`
