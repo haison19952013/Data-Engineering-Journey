@@ -1,6 +1,12 @@
 import logging
 from google.cloud import bigquery
+import google.cloud.logging
+import logging
 import os
+
+# Setup structured logger
+client = google.cloud.logging.Client()
+client.setup_logging()  # Routes Python logs to Cloud Logging with proper severity
 
 def trigger_bigquery_load(event, context):
     bucket_name = event['bucket']
