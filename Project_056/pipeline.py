@@ -11,6 +11,7 @@ from datetime import datetime
 from crawl_tool import crawl_prod_name
 from google.cloud import storage, bigquery
 import math
+import json
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 log_filename = f"logs/{timestamp}_ETL.log"
@@ -277,64 +278,22 @@ class Product_ETL_Local(MongoDB_Connector):
 
 
 class Glamira_All_EL_GCS(MongoDB_Connector):
-    def __init__(self):
+    def __init__(self, avro_schema_path=None):
         super().__init__()
         self.gcs_config = load_config(filename="database.ini", section="gcs")
+        self.avro_schema_path = avro_schema_path
 
     @logger.log_errors(logger)
     def extract_load(self, batch_size=500_000, input_dir='data', output_prefix="glamira_batch"):
         if self.mongo_base_collection is None:
             self.conn_mongo()  # Ensure DB connection
 
-        schema = {
-            "doc": "User activity from MongoDB (option removed)",
-            "name": "UserActivity",
-            "namespace": "com.example",
-            "type": "record",
-            "fields": [
-                {"name": "_id", "type": "string"},
-                {"name": "time_stamp", "type": [
-                    "null", "long"], "default": None},
-                {"name": "ip", "type": ["null", "string"], "default": None},
-                {"name": "user_agent", "type": [
-                    "null", "string"], "default": None},
-                {"name": "resolution", "type": [
-                    "null", "string"], "default": None},
-                {"name": "user_id_db", "type": [
-                    "null", "string"], "default": None},
-                {"name": "device_id", "type": [
-                    "null", "string"], "default": None},
-                {"name": "api_version", "type": [
-                    "null", "string"], "default": None},
-                {"name": "store_id", "type": [
-                    "null", "string"], "default": None},
-                {"name": "local_time", "type": [
-                    "null", "string"], "default": None},
-                {"name": "show_recommendation", "type": [
-                    "null", "string"], "default": None},
-                {"name": "current_url", "type": [
-                    "null", "string"], "default": None},
-                {"name": "referrer_url", "type": [
-                    "null", "string"], "default": None},
-                {"name": "email_address", "type": [
-                    "null", "string"], "default": None},
-                {"name": "recommendation", "type": [
-                    "null", "boolean"], "default": None},
-                {"name": "utm_source", "type": [
-                    "null", "boolean", "string"], "default": None},
-                {"name": "utm_medium", "type": [
-                    "null", "boolean", "string"], "default": None},
-                {"name": "collection", "type": [
-                    "null", "string"], "default": None},
-                {"name": "product_id", "type": [
-                    "null", "string"], "default": None}
-            ]
-        }
-        parsed_schema = fastavro.parse_schema(schema)
+        avro_schema = json.load(open(self.avro_schema_path))
+        parsed_schema = fastavro.parse_schema(avro_schema)
 
         cursor = self.mongo_base_collection.find()
         for i, batch in enumerate(batch_iterator(cursor, batch_size)):
-            batch_data = [self.normalize_record(doc, schema) for doc in batch]
+            batch_data = [self.normalize_record(doc, avro_schema) for doc in batch]
 
             filename = f"{output_prefix}_{i+1}.avro"
             local_filepath = os.path.join(input_dir, filename)
@@ -373,7 +332,7 @@ class Glamira_All_EL_GCS(MongoDB_Connector):
         """Convert MongoDB record to Avro-ready format, dropping unwanted fields."""
         record = dict(record)
         record["_id"] = str(record.get("_id", ""))
-        record.pop("option", None)  # Drop 'option' field
+        # record.pop("option", None)  # Drop 'option' field
 
         # Ensure all schema fields exist
         schema_fields = {f["name"] for f in schema["fields"]}
@@ -591,8 +550,8 @@ if __name__ == "__main__":
     # el_biquery.run()
 
     # ## Load all Glamira records to GCS
-    # glamira_el = Glamira_All_EL_GCS()
-    # glamira_el.run()
+    glamira_el = Glamira_All_EL_GCS(avro_schema_path = 'data_dict/avro_schema.json')
+    glamira_el.run()
 
     # ## Load IP locaton recors to GCS
     # ip_location_el = IP_Location_EL_GCS()
