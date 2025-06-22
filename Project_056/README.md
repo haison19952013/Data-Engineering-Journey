@@ -1,6 +1,6 @@
 
 # 🔄☁️💾 End-to-End GCP MongoDB Data Pipeline
-
+![Data Pipeline](https://github.com/haison19952013/Data-Engineering-Journey/blob/1f9bfd773dda05482e27913ff622f6932acf85b0/Project_056/pipeline.svg)
 # 1. GCP CLI Installation and Project Setup
 
 ## 1.1 Install GCP CLI
