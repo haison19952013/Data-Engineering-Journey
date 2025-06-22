@@ -550,8 +550,8 @@ if __name__ == "__main__":
     # el_biquery.run()
 
     # ## Load all Glamira records to GCS
-    glamira_el = Glamira_All_EL_GCS(avro_schema_path = 'data_dict/avro_schema.json')
-    glamira_el.run()
+    #glamira_el = Glamira_All_EL_GCS(avro_schema_path = 'data_dict/avro_schema.json')
+    # glamira_el.run()
 
     # ## Load IP locaton recors to GCS
     # ip_location_el = IP_Location_EL_GCS()

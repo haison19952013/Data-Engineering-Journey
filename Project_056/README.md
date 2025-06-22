@@ -372,24 +372,90 @@ db.summary.aggregate([
 ])
 ```
 
+Here’s a clearer, more structured rewrite of your documentation:
 
+---
 
-## 9.3 🧪 (Optional) Export for Pandas Profiling
+# 10. Loading Data from GCS to BigQuery
 
-```bash
-mongoexport --db reports --collection summary --out summary.json
+> **Note:** Before running the Python scripts using the Google Cloud SDK, make sure you're authenticated. Use the following command if needed:
+>
+> ```bash
+> gcloud auth application-default login
+> ```
+
+---
+
+## 10.1 Exporting Data to GCS
+
+Three Python classes are used to export different data sources to Google Cloud Storage (GCS):
+
+* **`Glamira_All_EL_GCS`**: Exports all records from the MongoDB collection `summary`.
+* **`IP_Location_EL_GCS`**: Exports records from the `ip_location` collection in MongoDB.
+* **`Product_EL_GCS`**: Uploads local `.csv` product data.
+
+### Usage Example
+
+```python
+glamira_el = Glamira_All_EL_GCS(avro_schema_path='data_dict/avro_schema.json')
+glamira_el.run()
 ```
 
+### Key Details
 
+* The data is first converted to `.avro` format, then uploaded to separate GCS folders.
+* **Why `.avro`?** Because BigQuery supports it natively and it allows you to define an explicit schema.
+* The schema for `Glamira_All_EL_GCS` is complex, so it's provided in `avro_schema.json`.
+* For other classes, the schema is defined directly in the Python code.
 
-## 9.4 ✅ Checklist Summary
+---
 
-* [ ] Field presence & nulls
-* [ ] Consistent data types
-* [ ] Value distributions
-* [ ] Duplicates
-* [ ] Nested field completeness (`option`)
-* [ ] Exported for offline profiling (optional)
+## 10.2 Loading Data from GCS to BigQuery (Manual Step)
 
-# 
-`gcloud auth application-default login`
+The `EL_BigQuery` class is responsible for loading the exported `.avro` files from GCS into BigQuery tables.
+
+### Usage Example
+
+```python
+el_bigquery = EL_BigQuery()
+el_bigquery.run()
+```
+
+This is a manual approach for initial loading. In the next section, we automate this step.
+
+---
+
+## 10.3 Automating BigQuery Load Jobs
+
+The `trigger_bigquery_load` folder contains the setup for an automatic load job triggered by file uploads to GCS.
+
+### Folder Contents
+
+* **`main.py`**: Contains the `trigger_bigquery_load` function, which defines how to load new files into BigQuery.
+* **`requirements.txt`**: Lists Python dependencies needed to run `main.py`.
+
+> The `trigger_bigquery_load` function is conceptually similar to the `extract_load` method in the `EL_BigQuery` class.
+
+---
+
+## 10.4 Setting Up Error Alerts for Cloud Function
+
+To monitor errors during BigQuery load jobs, you can set up an alert in Google Cloud Monitoring:
+
+### Steps
+
+1. **Create a log-based metric** using the following query:
+
+   ```sql
+   resource.type="cloud_function"
+   resource.labels.function_name="trigger_bigquery_load"
+   resource.labels.region="us-central1"
+   severity>=ERROR
+   ```
+
+2. **Create an alerting policy** using this metric. Configure the alert to notify via email, Slack, or another preferred channel.
+
+---
+
+Let me know if you’d like this turned into a Markdown or README format.
+
