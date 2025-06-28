@@ -12,6 +12,7 @@ import os
 import json
 import fastavro
 
+
 def clean_text(text):
     def clean(token):
         token = token.lower()
@@ -135,7 +136,60 @@ def extract_types(doc: Any, parent_key=''):
                 types[nk].update(tv)
     return types
 
+import re
+
+def clean_number(price):
+    try:
+        if isinstance(price, str):
+            price = re.sub(r'[^\d.]', '', price)
+        if price.count('.') > 1:
+            parts = price.split('.')
+            # Join all parts except the last as integer part
+            price = ''.join(parts[:-1]) + '.' + parts[-1]
+        return float(price)
+    except:
+        return None
+
+def normalize_record(record):
+    # Normalize cart_products
+    cart_products = record.get("cart_products")
+    if isinstance(cart_products, list):
+        for idx, cart_product in enumerate(cart_products):
+            option = cart_product.get("option")
+            if option == "":
+                cart_product["option"] = []
+            elif isinstance(option, dict):
+                cart_product["option"] = [option]
+
+            # price = cart_product.get("price")
+            # if isinstance(price, str):
+            #     cart_product["price"] = clean_number(price)
+
+    # Normalize option
+    option = record.get("option")
+    if option == "":
+        record["option"] = []
+    elif isinstance(option, dict):
+        record["option"] = [option]
+
+    # Normalize price
+    # price = record.get("price")
+    # if isinstance(price, str):
+    #     record["price"] = clean_number(price)
+
+    # Normalize empty strings to None
+    for key, value in record.items():
+        if value == "":
+            record[key] = None
+    order_id = record.get("order_id")
+    if order_id is not None:
+        record["order_id"] = str(order_id)
+
+    return record
+
+
 def extract_schema_from_mongodb(collection, output_folder, explore_limit = 20_000):
+    
     combined_schema = defaultdict(set)
     # Step 1: Get all distinct collection types
     collection_types = collection.distinct("collection")
@@ -147,7 +201,7 @@ def extract_schema_from_mongodb(collection, output_folder, explore_limit = 20_00
         # Sample up to 20k documents per type
         sample_cursor = collection.find({"collection": coll_type}).limit(explore_limit)
         for doc in sample_cursor:
-            doc_types = extract_types(doc)
+            doc_types = extract_types(normalize_record(doc))
             for path, types in doc_types.items():
                 field_types[path].update(types)
                 combined_schema[path].update(types)

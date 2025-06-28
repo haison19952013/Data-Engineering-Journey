@@ -12,6 +12,7 @@ from crawl_tool import crawl_prod_name
 from google.cloud import storage, bigquery
 import math
 import json
+from utils import normalize_record as normalize_record_further
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 log_filename = f"logs/{timestamp}_ETL.log"
@@ -300,7 +301,6 @@ class Glamira_All_EL_GCS(MongoDB_Connector):
             bucket_name = self.gcs_config["bucket"]
             remote_filepath = os.path.join(
                 self.gcs_config["post_process_all_path"], filename)
-
             with open(local_filepath, "wb") as f:
                 fastavro.writer(f, parsed_schema, batch_data)
             self.load(local_filepath, bucket_name, remote_filepath)
@@ -339,7 +339,7 @@ class Glamira_All_EL_GCS(MongoDB_Connector):
         for field in schema_fields:
             if field not in record:
                 record[field] = None
-        return record
+        return normalize_record_further(record)
 
 
 class IP_Location_EL_GCS(MongoDB_Connector):
@@ -550,8 +550,8 @@ if __name__ == "__main__":
     # el_biquery.run()
 
     # ## Load all Glamira records to GCS
-    #glamira_el = Glamira_All_EL_GCS(avro_schema_path = 'data_dict/avro_schema.json')
-    # glamira_el.run()
+    glamira_el = Glamira_All_EL_GCS(avro_schema_path = 'data_dict/avro_schema.json')
+    glamira_el.run()
 
     # ## Load IP locaton recors to GCS
     # ip_location_el = IP_Location_EL_GCS()
