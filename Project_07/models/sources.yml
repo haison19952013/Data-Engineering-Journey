@@ -1,0 +1,178 @@
+version: 2
+
+sources:
+  - name: glamira_src
+    description: This is a replica of the Postgres database used by our app
+    database: dataengineeringjourney-458915
+    schema: glamira_post_process
+    tables:
+      - name: all
+        description: "Raw event data including product info, options, and cart details"
+        columns:
+          - name: _id
+            description: "Unique identifier"
+            data_type: string
+          - name: time_stamp
+            description: "UNIX timestamp"
+            data_type: int64
+          - name: ip
+            description: "User IP address"
+            data_type: string
+          - name: user_agent
+            description: "Browser user agent"
+            data_type: string
+          - name: resolution
+            description: "Screen resolution"
+            data_type: string
+          - name: user_id_db
+            description: "Internal user ID"
+            data_type: string
+          - name: device_id
+            description: "Device ID"
+            data_type: string
+          - name: api_version
+            description: "API version"
+            data_type: string
+          - name: store_id
+            description: "Store identifier"
+            data_type: string
+          - name: local_time
+            description: "Client's local time"
+            data_type: string
+          - name: show_recommendation
+            description: "Recommendation shown flag"
+            data_type: string
+          - name: current_url
+            description: "Current page URL"
+            data_type: string
+          - name: referrer_url
+            description: "Referring page URL"
+            data_type: string
+          - name: email_address
+            description: "User's email address"
+            data_type: string
+          - name: collection
+            description: "Type of data event"
+            data_type: string
+          - name: product_id
+            description: "Product ID"
+            data_type: string
+          - name: price
+            description: "Product price"
+            data_type: string
+          - name: currency
+            description: "Price currency"
+            data_type: string
+          - name: is_paypal
+            description: "Was PayPal used"
+            data_type: boolean
+          - name: option
+            description: "List of product options"
+            data_type: >
+              ARRAY<STRUCT<
+                option_label STRING,
+                option_id STRING,
+                value_label STRING,
+                value_id STRING,
+                quality STRING,
+                quality_label STRING,
+                alloy STRING,
+                diamond STRING,
+                shapediamond STRING,
+                stone STRING,
+                pearlcolor STRING,
+                finish STRING,
+                price STRING,
+                category_id STRING,
+                kollektion STRING,
+                kollektion_id STRING>>
+          - name: order_id
+            description: "Order ID"
+            data_type: string
+          - name: cart_products
+            description: "List of products in the cart"
+            data_type: >
+              ARRAY<STRUCT<
+                product_id INT64,
+                amount INT64,
+                price STRING,
+                currency STRING,
+                option ARRAY<STRUCT<
+                  option_label STRING,
+                  option_id INT64,
+                  value_label STRING,
+                  value_id INT64>>>>
+          - name: recommendation_product_id
+            description: "Recommended product ID"
+            data_type: string
+          - name: recommendation_product_position
+            description: "Position of recommended product"
+            data_type: int64
+          - name: recommendation_clicked_position
+            description: "Position of clicked recommendation"
+            data_type: int64
+          - name: cat_id
+            description: "Category ID"
+            data_type: string
+          - name: collect_id
+            description: "Collection ID"
+            data_type: string
+          - name: viewing_product_id
+            description: "ID of the product being viewed"
+            data_type: string
+          - name: key_search
+            description: "Search keyword"
+            data_type: string
+          - name: recommendation
+            description: "Was recommendation clicked"
+            data_type: boolean
+          - name: utm_source
+            description: "UTM source (campaign tracking)"
+            data_type: string
+          - name: utm_medium
+            description: "UTM medium (campaign tracking)"
+            data_type: string
+
+      - name: ip_location
+        description: "IP addresses and their corresponding locations"
+        columns:
+          - name: _id
+            description: "MongoDB unique identifier"
+            data_type: string
+          - name: ip
+            description: "IP address"
+            data_type: string
+          - name: country_short
+            description: "Country short name"
+            data_type: string
+          - name: country_long
+            description: "Country long name"
+            data_type: string
+          - name: region
+            description: "Region"
+            data_type: string
+          - name: city
+            description: "City"
+            data_type: string
+
+      - name: product
+        description: "Product information"
+        columns:
+          - name: name
+            description: "Product name"
+            data_type: string
+          - name: language_code
+            description: "Language code"
+            data_type: string
+          - name: status_code
+            description: "Request status code"
+            data_type: string
+          - name: method
+            description: "Crawling method"
+            data_type: string
+          - name: product_id
+            description: "Product ID"
+            data_type: string
+          - name: url
+            description: "Product URL"
+            data_type: string

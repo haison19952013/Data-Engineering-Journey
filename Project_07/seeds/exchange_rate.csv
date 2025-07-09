@@ -1,0 +1,36 @@
+symbol,code,currency_name,exchange_rate,country_code
+"CHF",CHF,"Swiss Franc",1.13,CH
+"€",EUR,"Euro",1.09,EU
+"kr",SEK,"Swedish Krona",0.1,SE
+"₺",TRY,"Turkish lira",0.027,TR
+"￥",JPY,"Japanese Yen",0.0067,JP
+"AU $",AUD,"Australian Dollar",0.62856,AU
+"SGD $",SGD,"Singapore Dollar",0.75,SG
+"CAD $",CAD,"Canadian Dollar",0.69,CA
+"$",USD,"United States Dollar",1.0,US
+"USD $",USD,"United States Dollar",1.0,US
+"Kč",CZK,"Czech Koruna",0.044,CZ
+"Ft",HUF,"Hungarian Forint",0.0027,HU
+"HKD $",HKD,"Hong Kong Dollar",0.13,HK
+"zł",PLN,"Polish Zloty",0.25,PL
+"COP $",COP,"Colombian Peso",0.00024,CO
+"din.",RSD,"Serbian Dinar",0.0093,RS
+"kn",HRK,"Kuna Croatia",0.14244,HR
+"NZD $",NZD,"New Zealand Dollar",0.57,NZ
+"MXN $",MXN,"Mexican Peso",0.049,MX
+"лв.",BGN,"Bulgarian Lev",0.56,BG
+"CRC ₡",CRC,"Costa Rican Colón",0.002,CR
+"£",GBP,"Pound Sterling",1.29,GB
+"PEN S/.",PEN,"Sol",0.27,PE
+"CLP",CLP,"Chilean Peso",0.0011,CL
+"₱",PHP,"Philippine Peso",0.017,PH
+"Lei",RON,"Romanian Leu",0.22,RO
+"BOB Bs",BOB,"Bolivian Boliviano",0.14477,BO
+"UYU",UYU,"Uruguayan Peso",0.024,UY
+"₫",VND,"Vietnamese Dong",0.000039,VN
+"GTQ Q",GTQ,"Guatemalan Quetzal",0.13,GT
+"د.ك.",KWD,"Kuwaiti Dinar",3.25,KW
+"₹",INR,"Indian Rupee",0.011,IN
+"R$",BRL,"Brazilian Real",0.172086,BR
+"DOP $",DOP,"Dominican Peso",0.016,DO
+"₲",PYG,"Paraguayan Guarani",0.01261,PY

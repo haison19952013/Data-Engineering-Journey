@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: fact_sales
+    description: >
+      Core fact table that captures individual sales transactions. Each record represents
+      a sale and references related dimensions such as product, location, and date.
+    columns:
+      - name: sales_key
+        description: >
+          Unique identifier for each sales transaction, used as the primary key of the fact table.
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_product
+    description: >
+      Dimension table containing cleaned and deduplicated product data. Used to provide
+      descriptive attributes about products in sales analysis.
+    columns:
+      - name: product_key
+        description: >
+          Surrogate key uniquely identifying each product in the dimension table.
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_location
+    description: >
+      Dimension table that stores enriched location information, such as country or region,
+      often derived from IP addresses or customer-provided data.
+    columns:
+      - name: location_key
+        description: >
+          Surrogate key uniquely identifying each location record.
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_date
+    description: >
+      Date dimension table used to provide detailed date-related attributes for time-based
+      analysis, including year, quarter, month, and day indicators.
+    columns:
+      - name: full_date
+        description: >
+          Unique date value representing a specific calendar day in YYYY-MM-DD format.
+        tests:
+          - unique
+          - not_null

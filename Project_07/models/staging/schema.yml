@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_fact_sales
+    description: >
+      Staging model for sales fact table. This model standardizes and prepares raw sales
+      data for use in downstream fact models. It includes keys referencing products,
+      locations, and other dimensional data.
+    columns:
+      - name: sales_key
+        description: Unique identifier for each sales transaction.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_dim_product
+    description: >
+      Staging model for product dimension data. This model cleans and deduplicates
+      product information before it's used in the dimensional model.
+    columns:
+      - name: product_key
+        description: Unique identifier for each product.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_dim_location
+    description: >
+      Staging model for location dimension data. This model formats and enriches location
+      data (e.g. IP geolocation results) before use in the dimension model.
+    columns:
+      - name: location_key
+        description: Unique identifier for each location, often derived from hashed IP addresses.
+        tests:
+          - unique
+          - not_null

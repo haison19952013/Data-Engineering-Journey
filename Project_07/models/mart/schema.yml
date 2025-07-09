@@ -1,0 +1,13 @@
+version: 1
+
+models:
+  - name: sales_flat
+    description: >
+      Ready-to-use sales data after joining with product, location, and date dimensions.
+    columns:
+      - name: sales_key
+        description: >
+          Unique identifier for each sales transaction.
+        tests:
+          - unique
+          - not_null
