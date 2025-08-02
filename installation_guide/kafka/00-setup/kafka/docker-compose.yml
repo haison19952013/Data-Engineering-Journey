@@ -118,9 +118,15 @@ services:
       AKHQ_CONFIGURATION: |
         akhq:
           connections:
-            kafka-server:
+            kafka-local-server:
               properties:
                 bootstrap.servers: "kafka-0:9092,kafka-1:9092,kafka-2:9092"
+                security.protocol: SASL_PLAINTEXT
+                sasl.mechanism: PLAIN
+                sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="kafka" password="UnigapKafka@2024";
+            kafka-remote-server:
+              properties:
+                bootstrap.servers: 46.202.167.130:9094,46.202.167.130:9194,46.202.167.130:9294
                 security.protocol: SASL_PLAINTEXT
                 sasl.mechanism: PLAIN
                 sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="kafka" password="UnigapKafka@2024";
