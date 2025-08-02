@@ -6,7 +6,7 @@ __pycache__/
 # Data files
 *.json
 *.BIN
-Project_056/data/*.csv
+Le_Son_LV1_Project_056/data/*.csv
 
 # .init files
 *.ini
