@@ -1,0 +1,7 @@
+apache-airflow==2.5.1
+apache-airflow-providers-postgres
+apache-airflow-providers-docker
+apache-airflow-providers-apache-kafka
+pandas
+elasticsearch
+psycopg[binary]
