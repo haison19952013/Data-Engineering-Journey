@@ -12,7 +12,7 @@ The solution is designed for **high-throughput, fault-tolerant data processing**
 
 ```
 Remote Kafka → Kafka2Kafka → Local Kafka → Kafka2Mongo → MongoDB
-    (Source)      (Replication)     (Local Hub)    (Persistence)   (Storage)
+(Source)      (Replication)   (Local Hub) (Persistence)  (Storage)
 ```
 
 ### Key Components
