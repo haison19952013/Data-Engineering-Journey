@@ -36,8 +36,7 @@ unigap/spark:3.5 spark-submit /spark/04-agg-group/agg_group.py
 
 ### 3.1 Yêu cầu 1
 
-Viết chương trình lấy ra danh sách các quốc gia, năm, số hóa đơn, số lượng sản phẩm, tổng sô tiền của từng quốc gia và
-năm đó
+Viết chương trình lấy ra danh sách các quốc gia, năm, số hóa đơn, số lượng sản phẩm, tổng sô tiền của từng quốc gia và năm đó
 
 Dữ liệu sắp xếp theo tên quốc gia và theo năm.
 
