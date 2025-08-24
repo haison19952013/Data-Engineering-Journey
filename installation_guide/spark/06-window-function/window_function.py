@@ -25,16 +25,36 @@ if __name__ == '__main__':
 
     log.info("summary_df:")
     summary_df.show()
+    
+    # Question 1: Write a program to get the list of countries, weeks, number of invoices, total number of products, total invoice value, and rank based on the highest total amount for each country. The data should be sorted by country name and rank in ascending order.
 
-    country_window = Window.partitionBy("Country") \
-        .orderBy("WeekNumber")
+    country_window = Window.partitionBy("Country").orderBy(f.desc("InvoiceValue"))
 
-    row_num_df = summary_df.withColumn("RowNum", f.row_number().over(country_window))
+    q1_df = summary_df.withColumn("Rank", f.rank().over(country_window))
 
-    log.info("row_num_df schema:")
-    row_num_df.printSchema()
+    log.info("q1_df schema:")
+    q1_df.printSchema()
 
-    log.info("row_num_df:")
-    row_num_df.show()
+    log.info("q1_df:")
+    q1_df.show()
+    
+    # Question 2: Write a program to get the list of countries, weeks, number of invoices, number of products, invoice value, and cumulative invoice value up to the current week's record, percentage increase in invoice value compared to the previous week. The data should be sorted by country name and week.
+
+    cumulative_invoice_window = Window.partitionBy("Country").orderBy("WeekNumber").rowsBetween(Window.unboundedPreceding, Window.currentRow)
+
+    q2_df = summary_df.withColumn("CumulativeInvoiceValue", f.sum("InvoiceValue").over(cumulative_invoice_window))
+
+    pct_change_window = Window.partitionBy("Country").orderBy("WeekNumber")
+
+    q2_df = q2_df.withColumn("PctChange", (f.col("InvoiceValue") - f.lag("InvoiceValue").over(pct_change_window)) / f.lag("InvoiceValue").over(pct_change_window) * 100)
+    
+    # Fill null values in PctChange with 0
+    q2_df = q2_df.fillna({"PctChange": 0})
+
+    log.info("q2_df schema:")
+    q2_df.printSchema()
+
+    log.info("q2_df:")
+    q2_df.show()
 
     spark.stop()
