@@ -25,12 +25,12 @@ docker cp 07-udf/data/survey.csv spark-spark-worker-1:/data/udf/
 ```shell
 docker container stop udf || true &&
 docker container rm udf || true &&
-(cd 07-udf && rm gender_util.zip || true && zip -r gender_util.zip gender_util/*) &&
+(cd 07-udf && rm my_util.zip || true && zip -r my_util.zip my_util/*) &&
 docker run -ti --name udf \
 --network=streaming-network \
 -v ./:/spark \
 -v spark_data:/data \
-unigap/spark:3.5 spark-submit --py-files /spark/07-udf/gender_util.zip /spark/07-udf/udf.py
+unigap/spark:3.5 spark-submit --py-files /spark/07-udf/my_util.zip /spark/07-udf/udf.py
 ```
 
 ## 3. Yêu cầu
