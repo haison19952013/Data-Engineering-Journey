@@ -32,8 +32,19 @@ if __name__ == '__main__':
         .withColumn("word", f.explode(f.split("value", " "))) \
         .groupBy("word") \
         .agg(f.count("*").alias("count"))
+    
+    # Question 1: Write a program to count words and print the list of words that appear an even number of times.
+    even_words_df = count_df.filter(f.col("count") % 2 == 0)
 
-    streaming_query = count_df.writeStream \
+    streaming_query = even_words_df.writeStream \
+        .format("console") \
+        .outputMode("complete") \
+        .trigger(processingTime="20 seconds") \
+        .start()
+    
+    # Question 2: Write a program to count words and print the list of words that have a length greater than 1 and appear an odd number of times.
+    odd_length_words_df = count_df.filter((f.col("count") % 2 == 1) & (f.length(f.col("word")) > 1))
+    odd_length_streaming_query = odd_length_words_df.writeStream \
         .format("console") \
         .outputMode("complete") \
         .trigger(processingTime="20 seconds") \
