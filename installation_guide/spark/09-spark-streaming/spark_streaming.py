@@ -32,7 +32,15 @@ if __name__ == "__main__":
     wordCounts = pairs.reduceByKey(lambda x, y: x + y)
 
     # Print the first ten elements of each RDD generated in this DStream to the console
-    wordCounts.pprint()
+    # wordCounts.pprint()
+    
+    # Question 1: Write a program to count words and print the list of words that have an even count.
+    evenWords = wordCounts.filter(lambda x: x[1] % 2 == 0)
+    evenWords.pprint()
+
+    # Question 2: Write a program to count words and print the list of words that have a length greater than 1 and have an odd count.
+    oddLengthWords = wordCounts.filter(lambda x: len(x[0]) > 1 and x[1] % 2 == 1)
+    oddLengthWords.pprint()
 
     ssc.start()  # Start the computation
     ssc.awaitTermination()  # Wait for the computation to terminate
