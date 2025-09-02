@@ -177,3 +177,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+installation_guide/spark/11-kafka-streaming/README.md
+installation_guide/spark/11-kafka-streaming/spark.conf
