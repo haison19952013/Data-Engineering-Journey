@@ -42,16 +42,15 @@ class SparkConnector:
         Note:
             The method includes Kafka package for Spark-Kafka integration.
         """
-        
-        # Build Spark session with configurations
-        builder = SparkSession.builder.appName(self.spark_config.get("app_name", "SparkApp")) \
-                .master(self.spark_config.get("master", "local[*]")) \
+        # Create Spark session
+        builder = SparkSession.builder.appName(self.spark_config.get("spark.app.name", "SparkApp")) \
+                .master(self.spark_config.get("spark.master", "local[*]")) \
                 .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0")
             
 
         # Add additional configurations
         for key, value in self.spark_config.items():
-            if key not in ["app_name", "master"]:
+            if key not in ["spark.app.name", "spark.master"]:
                 builder = builder.config(key, value)
         
         spark = builder.getOrCreate()
@@ -96,7 +95,16 @@ class PostgresConnector:
                 url = f"postgresql://{self.db_config['user']}:{self.db_config['password']}@{self.db_config['host_out']}:{self.db_config['port_out']}/{self.db_config['database']}"
             else:
                 url = f"postgresql://{self.db_config['user']}:{self.db_config['password']}@{self.db_config['host_in']}:{self.db_config['port_in']}/{self.db_config['database']}"
-            self.engine = create_engine(url)
+            
+            # Optimize connection pool settings for streaming workloads
+            self.engine = create_engine(
+                url,
+                pool_size=10,           # Number of connections to maintain
+                max_overflow=20,        # Additional connections allowed beyond pool_size
+                pool_timeout=30,        # Timeout to get connection from pool
+                pool_recycle=3600,      # Recycle connections every hour
+                pool_pre_ping=True      # Validate connections before use
+            )
         return self.engine
     
     @logger.log_errors(logger)

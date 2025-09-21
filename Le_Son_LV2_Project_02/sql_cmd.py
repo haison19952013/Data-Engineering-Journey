@@ -11,11 +11,11 @@ def get_create_table_sql():
     sql_commands['fact_sales'] = """
     CREATE TABLE IF NOT EXISTS fact_sales (
         sales_key VARCHAR PRIMARY KEY,
-        full_date VARCHAR NOT NULL,
-        full_time VARCHAR NOT NULL,
-        ip_key VARCHAR NOT NULL,
-        user_agent_key VARCHAR NOT NULL,
-        product_key VARCHAR NOT NULL,
+        full_date VARCHAR,
+        full_time VARCHAR,
+        ip_key VARCHAR,
+        user_agent_key VARCHAR,
+        product_key VARCHAR,
         referrer_url VARCHAR,
         collection VARCHAR,
         option TEXT,
@@ -64,7 +64,7 @@ def get_create_table_sql():
     sql_commands['dim_location'] = """
     CREATE TABLE IF NOT EXISTS dim_location (
         ip_key VARCHAR PRIMARY KEY,
-        ip_address VARCHAR NOT NULL,
+        ip_address VARCHAR,
         country_code VARCHAR,
         country_name VARCHAR,
         region_name VARCHAR,
@@ -76,7 +76,7 @@ def get_create_table_sql():
     sql_commands['dim_user_agent'] = """
     CREATE TABLE IF NOT EXISTS dim_user_agent (
         user_agent_key VARCHAR PRIMARY KEY,
-        user_agent TEXT NOT NULL,
+        user_agent TEXT,
         browser VARCHAR,
         os VARCHAR
     );
