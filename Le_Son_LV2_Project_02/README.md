@@ -178,6 +178,9 @@ cd /path/to/Data-Engineering-Journey/Le_Son_LV2_Project_02
 
 - **Quick Health Check** (Optional but recommended):
 ```bash
+# Make script executable (first time only)
+chmod +x check_kafka_health.sh
+
 # Check Kafka servers connectivity before deployment
 ./check_kafka_health.sh
 ```
@@ -319,6 +322,12 @@ The pipeline supports the following analytics queries:
 4. **Store Performance by Country (Ranked by Views)**
 5. **Hourly View Distribution by Product (Current Day)**
 6. **Hourly Browser/OS Analytics (Current Day)**
+
+### 📊 Sample Analytics Dashboard
+
+Below is a sample dashboard showing various analytics reports and visualizations generated from the streaming data:
+
+![Analytics Dashboard](dashboard.png)
 
 ## 🔧 Configuration Management
 
