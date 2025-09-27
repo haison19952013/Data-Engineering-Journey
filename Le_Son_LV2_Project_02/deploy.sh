@@ -118,7 +118,7 @@ deploy_container() {
           --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.postgresql:postgresql:42.7.3 \
           --archives pyspark_venv.tar.gz#environment \
           --py-files /spark/streaming_modules.zip \
-          /spark/streaming_pipeline/run_pipeline.py
+          /spark/streaming_pipeline/run_pipeline.py --stream --production --processing-mode foreachBatch
         "
 }
 

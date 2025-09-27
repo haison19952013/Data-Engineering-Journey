@@ -217,7 +217,7 @@ spark-submit \
   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.postgresql:postgresql:42.7.3 \
   --archives pyspark_venv.tar.gz#environment \
   --py-files /spark/streaming_modules.zip \
-  /spark/streaming_pipeline/run_pipeline.py"
+  /spark/streaming_pipeline/run_pipeline.py --stream --production --processing-mode foreachBatch"
 ```
 
 #### Option 2: Local Development
@@ -227,12 +227,27 @@ spark-submit \
 cd Le_Son_LV2_Project_02
 pip install -r requirements.txt
 
-# Run warmup pipeline (initialize database)
-python streaming_pipeline/run_pipeline.py  # Set warmup flag to True in the file first
+# Run warmup pipeline (initialize database schema)
+# Test mode (default)
+python streaming_pipeline/run_pipeline.py --warmup
 
-# Run streaming pipeline
-python streaming_pipeline/run_pipeline.py  # Set streaming flag to True in the file
+# Production mode (if needed)
+python streaming_pipeline/run_pipeline.py --warmup --production
+
+# Run streaming pipeline (default: test mode + foreachBatch)
+python streaming_pipeline/run_pipeline.py
+
+# Run streaming pipeline with different options
+python streaming_pipeline/run_pipeline.py --processing-mode foreachPartition  # Test mode with foreachPartition
+python streaming_pipeline/run_pipeline.py --production                        # Production mode with foreachBatch
+python streaming_pipeline/run_pipeline.py --production --processing-mode foreachPartition  # Production + foreachPartition
 ```
+
+**CLI Arguments Summary:**
+- **No arguments**: Streaming mode, test mode, foreachBatch (default for development)
+- **`--warmup`**: Initialize database schema
+- **`--production`**: Run in production mode (default: test mode)
+- **`--processing-mode`**: Choose `foreachPartition` or `foreachBatch` (default: foreachBatch)
 
 ### 📊 Monitoring & Validation
 
