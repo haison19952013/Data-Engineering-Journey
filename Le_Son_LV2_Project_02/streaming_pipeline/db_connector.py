@@ -1,12 +1,15 @@
 import re
-
+import os
 from sqlalchemy import create_engine, text
+from sqlalchemy.dialects.postgresql import insert
 from config import load_config
 from pyspark.sql import SparkSession
 from utils import Logger
 import pandas as pd
+import utils
 
 logger = Logger()
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
 
 class SparkConnector:
     """
@@ -29,7 +32,7 @@ class SparkConnector:
         Args:
             config_name (str): Section name in config .ini file containing Spark configuration
         """
-        self.spark_config = load_config(filename="config.ini", section=config_name)
+        self.spark_config = load_config(filename=CONFIG_PATH, section=config_name)
 
     @logger.log_errors(logger)
     def create_spark_session(self):
@@ -70,16 +73,16 @@ class PostgresConnector:
         >>> pg_conn = PostgresConnector("docker_postgres")
         >>> conn = pg_conn.conn_postgres()
     """
-    def __init__(self, config_name, test= False, insert_batch_size=100_000):
+    def __init__(self, config_name, test_mode= False, insert_batch_size=100_000):
         """
         Initialize PostgresConnector with configuration from specified database section.
         
         Args:
             config_name (str): Section name in config.ini file containing PostgreSQL configuration
         """
-        self.db_config = load_config(filename="config.ini", section=config_name)
+        self.db_config = load_config(filename=CONFIG_PATH, section=config_name)
         self.engine = None
-        self.test = test
+        self.test_mode = test_mode
         self.insert_batch_size = insert_batch_size
 
     @logger.log_errors(logger)
@@ -91,7 +94,7 @@ class PostgresConnector:
             Engine: SQLAlchemy engine instance.
         """
         if self.engine is None:
-            if self.test:
+            if self.test_mode:
                 url = f"postgresql://{self.db_config['user']}:{self.db_config['password']}@{self.db_config['host_out']}:{self.db_config['port_out']}/{self.db_config['database']}"
             else:
                 url = f"postgresql://{self.db_config['user']}:{self.db_config['password']}@{self.db_config['host_in']}:{self.db_config['port_in']}/{self.db_config['database']}"
@@ -103,7 +106,8 @@ class PostgresConnector:
                 max_overflow=20,        # Additional connections allowed beyond pool_size
                 pool_timeout=30,        # Timeout to get connection from pool
                 pool_recycle=3600,      # Recycle connections every hour
-                pool_pre_ping=True      # Validate connections before use
+                pool_pre_ping=True,      # Validate connections before use,
+                echo=False               # Disable SQL query logging
             )
         return self.engine
     
@@ -141,9 +145,9 @@ class PostgresConnector:
                 logger.info(f"Table '{table_name}' created successfully.")
 
     @logger.log_errors(logger)
-    def insert_record(self, table_name, records):
+    def insert_record(self, table_name, records, if_exists='append', use_on_conflict=True):
         """
-        Insert records into a PostgreSQL table.
+        Insert records into a PostgreSQL table with optional conflict resolution.
         
         Args:
             table_name (str): Name of the table to insert into.
@@ -151,10 +155,12 @@ class PostgresConnector:
                 - If DataFrame: Uses pandas to_sql for efficient bulk insert
                 - If dict: Single record
                 - If list of dict: Multiple records
+            if_exists (str): How to behave if the table exists ('append', 'replace', 'fail')
+            use_on_conflict (bool): If True, use ON CONFLICT DO NOTHING to ignore duplicates
                 
         Note:
-            For DataFrame input, uses pandas to_sql with if_exists='append'.
-            For dict/list, converts to DataFrame first.
+            When use_on_conflict=True, uses custom SQL with ON CONFLICT DO NOTHING
+            to gracefully handle duplicate key violations without errors.
         """
         engine = self.get_engine()
         
@@ -171,21 +177,64 @@ class PostgresConnector:
             return
         
         try:
-            df.to_sql(
-                table_name, 
-                engine, 
-                if_exists='append', 
-                index=False,
-                method='multi',  # Faster bulk inserts
-                chunksize=self.insert_batch_size  # Process in chunks for large datasets
-            )
+            if use_on_conflict and if_exists == 'append':
+                # Use pandas to_sql with custom method for ON CONFLICT DO NOTHING
+                df.to_sql(
+                    table_name, 
+                    engine, 
+                    if_exists=if_exists, 
+                    index=False,
+                    method=self._get_on_conflict_method(table_name),  # Custom method for conflict resolution
+                    chunksize=self.insert_batch_size
+                )
+            else:
+                # Use standard pandas to_sql
+                df.to_sql(
+                    table_name, 
+                    engine, 
+                    if_exists=if_exists, 
+                    index=False,
+                    method='multi',  # Faster bulk inserts
+                    chunksize=self.insert_batch_size  # Process in chunks for large datasets
+                )
             logger.info(f"Inserted {len(df)} record(s) into {table_name}")
         except Exception as e:
             # Check if it's a duplicate key error
             if "duplicate key value violates unique constraint" in str(e).lower():
                 logger.warning(f"Duplicate key detected for {table_name}. This indicates filtering logic needs review.")
-            logger.error(f"Failed to insert records into {table_name}: {e}")
-            raise
+            else:
+                logger.error(f"Failed to insert records into {table_name}: {e}")
+            # Don't raise - just log and continue
+    
+    def _get_on_conflict_method(self, table_name):
+        """
+        Returns a method function for pandas to_sql that uses ON CONFLICT DO NOTHING.
+        
+        Args:
+            table_name (str): Name of the target table
+            
+        Returns:
+            function: Method function for pandas to_sql
+        """
+        def insert_on_conflict_nothing(table, conn, keys, data_iter):
+            # Convert data_iter to a list of dictionaries
+            data = [dict(zip(keys, row)) for row in data_iter]
+            
+            # Define primary key columns for each table
+            primary_key_columns = utils.get_primary_key_columns(table_name)
+            
+            # Construct the insert statement with on_conflict_do_nothing
+            stmt = insert(table.table).values(data).on_conflict_do_nothing(
+                index_elements=primary_key_columns
+            )
+            
+            # Execute the statement
+            result = conn.execute(stmt)
+            return result.rowcount
+        
+        return insert_on_conflict_nothing
+    
+    
 
 if __name__ == "__main__":
     pass
