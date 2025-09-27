@@ -293,25 +293,6 @@ cp streaming_pipeline/config.ini.example streaming_pipeline/config.ini
 # Edit streaming_pipeline/config.ini with your local settings
 ```
 
-### Testing Pipeline Components
-```bash
-# Test individual components
-cd notebooks/
-jupyter notebook test_connection.ipynb
-
-# Run unit tests (if available)
-python -m pytest tests/
-
-# Manual testing with sample data
-python -c "
-import sys
-sys.path.append('/path/to/Le_Son_LV2_Project_02')
-from streaming_pipeline.pipeline import StreamingPipeline
-pipeline = StreamingPipeline(test_mode=True)
-# Add test code here
-"
-```
-
 ## 📈 Analytics Reports
 
 The pipeline supports the following analytics queries:
