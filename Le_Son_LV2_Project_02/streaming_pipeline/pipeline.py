@@ -260,6 +260,10 @@ class StreamingPipeline:
         # Access log4j from JVM and set level just for KafkaDataConsumer
         log4j = self.spark._jvm.org.apache.log4j
         log4j.LogManager.getLogger("org.apache.spark.sql.kafka010.KafkaDataConsumer").setLevel(log4j.Level.ERROR)
+        
+        # Optional: Reduce internal Spark logging verbosity (uncomment if you want less logs)
+        # log4j.LogManager.getLogger("org.apache.spark.scheduler.DAGScheduler").setLevel(log4j.Level.WARN)
+        # log4j.LogManager.getLogger("org.apache.spark.storage.MemoryStore").setLevel(log4j.Level.WARN)
 
         # Load Kafka configuration
         self.kafka_conf = load_config(filename=CONFIG_PATH, section="remote_kafka")
@@ -339,23 +343,24 @@ class StreamingPipeline:
         )
 
         return df
-
-    def load(self, fact_df, load_batch=10_000):
-        """Process a chunk of fact data using static methods for each table."""
+    
+    @staticmethod
+    def load(fact_df, test_mode=False, load_batch=10_000):
+        """Static version of load method for use in foreachPartition."""
         
         postgres_conn = PostgresConnector(
             config_name="docker_postgres", 
-            test_mode=self.test_mode, 
+            test_mode=test_mode, 
             insert_batch_size=load_batch
         )
         
         # Load dimension tables
-        self._load_dim_product(fact_df=fact_df, postgres_conn=postgres_conn)
-        self._load_dim_location(fact_df=fact_df, postgres_conn=postgres_conn)
-        self._load_dim_user_agent(fact_df=fact_df, postgres_conn=postgres_conn)
+        StreamingPipeline._load_dim_product(fact_df=fact_df, postgres_conn=postgres_conn)
+        StreamingPipeline._load_dim_location(fact_df=fact_df, postgres_conn=postgres_conn)
+        StreamingPipeline._load_dim_user_agent(fact_df=fact_df, postgres_conn=postgres_conn)
         
         # Load fact table
-        self._load_fact_sales(fact_df=fact_df, postgres_conn=postgres_conn)
+        StreamingPipeline._load_fact_sales(fact_df=fact_df, postgres_conn=postgres_conn)
 
     # ===== HELPER METHODS FOR TABLE LOADING =====
     
@@ -464,7 +469,7 @@ class StreamingPipeline:
     # ===== PROCESSING MODE METHODS =====
     
     @staticmethod
-    def _process_with_foreach_partition(df, load_func):
+    def _process_with_foreach_partition(df, test_mode=False):
         """Process streaming data using foreachPartition mode."""
         
         # Function to write partition to PostgreSQL
@@ -476,14 +481,15 @@ class StreamingPipeline:
                 partition_data = list(partition_iter)
 
                 if not partition_data:
+                    logging.info("Empty partition, skipping processing")
                     return
 
                 # Convert to pandas DataFrame
                 pandas_df = pd.DataFrame(
                     [row.asDict() for row in partition_data])
 
-                # Load the data (transform already done in Spark)
-                load_func(pandas_df)
+                # Load the data using static method (transform already done in Spark)
+                StreamingPipeline.load(pandas_df, test_mode=test_mode)
 
                 end_time = time.time()
                 logger.info(
@@ -497,27 +503,34 @@ class StreamingPipeline:
         def process_batch_with_repartition(df, epoch_id):
             """Process batch by repartitioning and using foreachPartition."""
             try:
-                # Use isEmpty() instead of count() for better performance
-                if not df.isEmpty():
-                    logger.info(
-                        f"Processing batch {epoch_id} using repartition + foreachPartition"
-                    )
-
-                    # Cache the dataframe to avoid recomputation
+                # Use count() to check if batch has data
+                batch_count = df.count()
+                
+                if batch_count > 0:
+                    # Check original partitions
+                    original_partitions = df.rdd.getNumPartitions()
+                    logger.info(f"Batch {epoch_id}: {batch_count} records, Original partitions = {original_partitions}")
+                    
+                    # Cache and repartition
                     df.cache()
-
-                    # Repartition the batch DataFrame and apply foreachPartition
-                    df.repartition(2).foreachPartition(write_to_postgres)
-
-                    # Unpersist to free memory
+                    
+                    # Choose partition count based on data or use fixed value
+                    target_partitions = min(4, max(2, original_partitions))
+                    logger.info(f"Batch {epoch_id}: Repartitioning to {target_partitions} partitions")
+                    
+                    df.repartition(target_partitions).foreachPartition(write_to_postgres)
                     df.unpersist()
+                    
+                    logger.info(f"Successfully processed batch {epoch_id}")
                 else:
-                    logger.info(
-                        f"Batch {epoch_id} is empty, skipping processing")
+                    logger.info(f"Batch {epoch_id} is empty, skipping processing")
             except Exception as e:
-                logger.error(
-                    f"Error processing batch {epoch_id}: {str(e)}")
-                # Continue processing other batches
+                logger.error(f"Error processing batch {epoch_id}: {str(e)}")
+                # Try to unpersist if dataframe was cached
+                try:
+                    df.unpersist()
+                except:
+                    pass
 
         # Start the streaming query with foreachBatch that uses repartition + foreachPartition
         query = (
@@ -532,7 +545,7 @@ class StreamingPipeline:
         return query
 
     @staticmethod
-    def _process_with_foreach_batch(parsed_df, load_func):
+    def _process_with_foreach_batch(parsed_df, test_mode=False):
         """Process streaming data using foreachBatch mode."""
         
         # Function to process batch data
@@ -559,8 +572,8 @@ class StreamingPipeline:
                         f"Converted batch {epoch_id} to pandas with {len(pandas_df)} records"
                     )
 
-                    # Load: Insert missing dimensions and filter existing facts (transform already done in Spark)
-                    load_func(pandas_df)
+                    # Load: Insert missing dimensions and filter existing facts using static method (transform already done in Spark)
+                    StreamingPipeline.load(pandas_df, test_mode=test_mode)
 
                     end_time = time.time()
                     logger.info(
@@ -609,9 +622,9 @@ class StreamingPipeline:
 
         # Choose processing mode
         if processing_mode == "foreachPartition":
-            query = self._process_with_foreach_partition(df=parsed_df, load_func=self.load)
+            query = self._process_with_foreach_partition(df=parsed_df, test_mode=self.test_mode)
         elif processing_mode == "foreachBatch":
-            query = self._process_with_foreach_batch(parsed_df=parsed_df, load_func=self.load)
+            query = self._process_with_foreach_batch(parsed_df=parsed_df, test_mode=self.test_mode)
         else:
             raise ValueError(
                 "processing_mode must be either 'foreachPartition' or 'foreachBatch'"
