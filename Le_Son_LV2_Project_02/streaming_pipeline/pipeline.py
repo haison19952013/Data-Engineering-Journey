@@ -87,13 +87,13 @@ class WarmupPipeline:
             self.postgres_conn.create_table(create_table_sql=create_sql)
 
         # Insert data into dimension tables
-        self.insert_dim_product()
-        self.insert_dim_location()
-        self.insert_dim_date()
+        self.load_dim_product()
+        self.load_dim_location()
+        self.load_dim_date()
 
     # ===== HELPER METHODS FOR DIMENSION TABLE POPULATION =====
 
-    def insert_dim_product(self):
+    def load_dim_product(self):
         """Insert product data from CSV files into dim_product table."""
         data_config = load_config(filename=CONFIG_PATH, section="data_paths")
         base_path = data_config["base_path"]
@@ -129,7 +129,7 @@ class WarmupPipeline:
 
         logger.info(f"Total processed {total_processed} product records")
 
-    def insert_dim_location(self):
+    def load_dim_location(self):
         """Insert location data from CSV files into dim_location table."""
         data_config = load_config(filename=CONFIG_PATH, section="data_paths")
         base_path = data_config["base_path"]
@@ -174,7 +174,7 @@ class WarmupPipeline:
 
         logger.info(f"Total processed {total_processed} location records")
 
-    def insert_dim_date(self):
+    def load_dim_date(self):
         """Insert date dimension data from 2010 to 2030 into dim_date table."""
         logger.info("Generating date dimension data from 2010 to 2030")
 
