@@ -2,11 +2,11 @@ import re
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.dialects.postgresql import insert
-from config import load_config
+from .config import load_config
 from pyspark.sql import SparkSession
-from utils import Logger
+from .utils import Logger
 import pandas as pd
-import utils
+from . import utils
 
 logger = Logger()
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
@@ -204,7 +204,7 @@ class PostgresConnector:
                 logger.warning(f"Duplicate key detected for {table_name}. This indicates filtering logic needs review.")
             else:
                 logger.error(f"Failed to insert records into {table_name}: {e}")
-            # Don't raise - just log and continue
+            raise e
     
     def _get_on_conflict_method(self, table_name):
         """

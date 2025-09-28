@@ -7,15 +7,15 @@ import time
 import shutil
 import logging
 
-from utils import (
+from .utils import (
     Logger,
     convert_numpy_types,
     get_table_creation_sql,
     get_kafka_json_schema,
     get_udfs
 )
-from db_connector import PostgresConnector, SparkConnector
-from config import load_config
+from .db_connector import PostgresConnector, SparkConnector
+from .config import load_config
 from pyspark.sql.functions import (
     col,
     from_json,
@@ -296,7 +296,10 @@ class StreamingPipeline:
         # 3. Generate hash keys
         df = df.withColumn(
             "sales_key",
-            sha2(concat(col("id"), col("product_id")), 256)
+            sha2(concat(
+                col("id"), 
+                when(col("product_id").isNotNull(), col("product_id")).otherwise(lit(""))
+            ), 256)
         )
         df = df.withColumn(
             "ip_key",
@@ -312,8 +315,8 @@ class StreamingPipeline:
         # 4. Convert product_id to product_key as string
         df = df.withColumn(
             "product_key",
-            when(col("product_id").isNotNull(), col(
-                "product_id").cast("string")).otherwise(lit(None))
+            when(col("product_id").isNotNull(), col("product_id").cast("string"))
+            .otherwise(lit(None))  # Keep as null if product_id is null
         )
 
         # 5. Clean referrer_url to extract domain using UDF
@@ -359,7 +362,7 @@ class StreamingPipeline:
     @staticmethod
     def _load_dim_product(fact_df, postgres_conn):
         """Load dimension data for products."""
-        unique_products = fact_df["product_key"].dropna().unique()
+        unique_products = fact_df["product_key"].dropna().drop_duplicates()
         if len(unique_products) > 0:
             # Convert to strings to match VARCHAR database type
             product_list = [
@@ -425,7 +428,8 @@ class StreamingPipeline:
     @staticmethod
     def _load_fact_sales(fact_df, postgres_conn):
         """Load fact data for sales."""
-        if not fact_df.empty:
+        unique_sales = fact_df.dropna(subset=["sales_key"]).drop_duplicates()
+        if not unique_sales.empty:
             # Select columns for fact_sales table
             fact_columns = [
                 "sales_key",
@@ -449,10 +453,10 @@ class StreamingPipeline:
                 "utm_source",
                 "utm_medium",
             ]
-            fact_data = fact_df[fact_columns]
+            sales_records = unique_sales[fact_columns]
             postgres_conn.insert_record(
                 table_name="fact_sales", 
-                records=fact_data, 
+                records=sales_records, 
                 if_exists='append', 
                 use_on_conflict=True
             )
