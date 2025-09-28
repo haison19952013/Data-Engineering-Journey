@@ -492,11 +492,11 @@ class StreamingPipeline:
                 StreamingPipeline.load(pandas_df, test_mode=test_mode)
 
                 end_time = time.time()
-                logger.info(
+                logging.info(
                     f"Partition processing completed {len(pandas_df)} records in {end_time - start_time:.2f} seconds"
                 )
             except Exception as e:
-                logger.error(f"Error processing partition: {str(e)}")
+                logging.error(f"Error processing partition: {str(e)}")
                 # Continue processing other partitions
 
         # Function to process batch and repartition for foreachPartition
@@ -519,13 +519,13 @@ class StreamingPipeline:
                     logger.info(f"Batch {epoch_id}: Repartitioning to {target_partitions} partitions")
                     
                     df.repartition(target_partitions).foreachPartition(write_to_postgres)
-                    df.unpersist()
                     
                     logger.info(f"Successfully processed batch {epoch_id}")
                 else:
                     logger.info(f"Batch {epoch_id} is empty, skipping processing")
             except Exception as e:
                 logger.error(f"Error processing batch {epoch_id}: {str(e)}")
+            finally:
                 # Try to unpersist if dataframe was cached
                 try:
                     df.unpersist()
