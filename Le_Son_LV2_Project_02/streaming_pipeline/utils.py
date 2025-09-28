@@ -47,7 +47,7 @@ def convert_numpy_types(obj):
         return float(obj)
     elif isinstance(obj, np.bool_):
         return bool(obj)
-    elif isinstance(obj, np.str_) or isinstance(obj, np.unicode_):
+    elif isinstance(obj, np.str_):
         return str(obj)
     else:
         return obj

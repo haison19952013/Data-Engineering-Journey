@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Real-time Data Streaming Pipeline Deployment Script
+# Real-time Data Streaming Pipeline Full Refresh Deployment Script
 # Author: Data Engineering Team
-# Description: Deploys Spark streaming pipeline with Docker
+# Description: Completely refreshes deployment by deleting and recreating Docker container
 
 set -e  # Exit on any error
 
@@ -61,15 +61,22 @@ check_prerequisites() {
     print_success "All prerequisites checked!"
 }
 
-# Function to clean up existing containers
-cleanup_containers() {
-    print_status "Cleaning up existing containers..."
+# Function to clean up spark-streaming container specifically
+cleanup_spark_streaming() {
+    print_status "Cleaning up spark-streaming container..."
     
-    # Stop and remove existing container
+    # Stop and remove existing spark-streaming container
+    print_status "Stopping and removing spark-streaming container..."
     docker container stop spark-streaming 2>/dev/null || true
     docker container rm spark-streaming 2>/dev/null || true
     
-    print_success "Container cleanup completed!"
+    # Optional: Clean up only our specific volumes if needed
+    # Uncomment these lines if you want to reset the Spark-specific volumes
+    # print_status "Removing Spark-specific Docker volumes..."
+    # docker volume rm spark_lib 2>/dev/null || true
+    # docker volume rm spark_data 2>/dev/null || true
+    
+    print_success "spark-streaming container cleanup completed!"
 }
 
 # Function to package Python modules
@@ -79,8 +86,8 @@ package_modules() {
     # Remove existing package if it exists
     rm -f streaming_modules.zip
     
-    # Create the package with all necessary files
-    zip -r streaming_modules.zip streaming_pipeline/*
+    # Create the package with all necessary files (include directory structure)
+    zip -r streaming_modules.zip streaming_pipeline/
     
     if [[ -f "streaming_modules.zip" ]]; then
         print_success "Python modules packaged successfully!"
@@ -92,9 +99,9 @@ package_modules() {
     fi
 }
 
-# Function to deploy Spark container
-deploy_container() {
-    print_status "Deploying Spark streaming container..."
+# Function to deploy fresh Spark container
+deploy_fresh_container() {
+    print_status "Deploying fresh Spark streaming container..."
     
     docker run -ti --name spark-streaming \
         --network=streaming-network \
@@ -105,26 +112,28 @@ deploy_container() {
         -e PYSPARK_DRIVER_PYTHON='python' \
         -e PYSPARK_PYTHON='./environment/bin/python' \
         unigap/spark:3.5 bash -c "
-        echo '=== Setting up Python environment ===' &&
+        echo '=== Fresh deployment - Setting up Python environment ===' &&
         python -m venv pyspark_venv &&
         source pyspark_venv/bin/activate &&
         echo '=== Installing Python dependencies ===' &&
+        pip install --upgrade pip setuptools &&
         pip install -r /spark/requirements.txt &&
+        echo '=== Installing venv-pack with distutils compatibility ===' &&
         pip install venv-pack &&
         echo '=== Packaging Python environment ===' &&
-        venv-pack -o pyspark_venv.tar.gz &&
-        echo '=== Starting Spark streaming pipeline ===' &&
+        SETUPTOOLS_USE_DISTUTILS=stdlib venv-pack -o pyspark_venv.tar.gz &&
+        echo '=== Starting Spark streaming pipeline (fresh deployment) ===' &&
         spark-submit \
           --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.postgresql:postgresql:42.7.3 \
           --archives pyspark_venv.tar.gz#environment \
           --py-files /spark/streaming_modules.zip \
-          /spark/streaming_pipeline/run_pipeline.py --stream --production --processing-mode foreachBatch
+          /spark/run_pipeline.py --production --processing-mode foreachBatch
         "
 }
 
 # Function to show post-deployment information
 show_post_deployment_info() {
-    print_success "Deployment completed successfully!"
+    print_success "Container refresh deployment completed successfully!"
     echo
     print_status "=== Post-Deployment Information ==="
     echo "📊 Spark UI: http://localhost:4040"
@@ -141,22 +150,27 @@ show_post_deployment_info() {
     echo
     echo "# Connect to container (for debugging):"
     echo "docker exec -it spark-streaming bash"
+    echo
+    print_status "Note: This was a CONTAINER REFRESH deployment (spark-streaming only)."
+    print_status "For incremental updates, use './deploy.sh' instead."
 }
 
 # Main deployment function
 main() {
-    echo "🚀 Starting Spark Streaming Pipeline Deployment"
-    echo "================================================"
+    echo "🔄 Starting REFRESH Spark Streaming Pipeline Deployment"
+    echo "========================================================"
+    print_warning "This will remove and recreate the spark-streaming container only!"
+    echo
     
     check_prerequisites
-    cleanup_containers
+    cleanup_spark_streaming
     package_modules
-    deploy_container
+    deploy_fresh_container
     show_post_deployment_info
 }
 
 # Handle script interruption
-trap 'print_error "Deployment interrupted!"; exit 1' INT
+trap 'print_error "Fresh deployment interrupted!"; exit 1' INT
 
 # Run main function
 main "$@"

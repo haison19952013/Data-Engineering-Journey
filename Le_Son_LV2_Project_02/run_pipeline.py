@@ -63,6 +63,8 @@ def main():
     else:  # Default to streaming mode
         print(f"🚀 Starting Streaming Pipeline (test_mode={test_mode}, processing_mode={args.processing_mode})")
         stream = StreamingPipeline(test_mode=test_mode)
+        # stream.initialize_connections()
+        # print("Creating Spark session with config:", stream.spark_conn.spark_config)
         stream.run(processing_mode=args.processing_mode)
 
 if __name__ == "__main__":
