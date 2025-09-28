@@ -1,3 +1,17 @@
+"""Database connector classes for the streaming pipeline.
+
+This module provides database connection management for both Spark and PostgreSQL
+databases used in the real-time data streaming pipeline. It handles configuration
+loading, connection pooling, and provides high-level interfaces for database operations.
+
+Classes:
+    SparkConnector: Manages Spark session creation and configuration
+    PostgresConnector: Manages PostgreSQL database connections and operations
+
+Author: Son Hai Le
+Version: 1.0.0
+"""
+
 import re
 import os
 from sqlalchemy import create_engine, text
@@ -12,38 +26,57 @@ logger = Logger()
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.ini")
 
 class SparkConnector:
-    """
-    A connector class for managing Spark session creation and configuration.
+    """Spark session connector for distributed data processing.
     
-    This class provides methods to create a Spark session with specified configurations,
-    including support for Kafka integration.
+    Manages the creation and configuration of Apache Spark sessions with
+    support for Kafka integration and custom configurations loaded from
+    configuration files.
     
     Attributes:
-        spark_config (dict): Configuration dictionary loaded from database.ini file
+        spark_config (dict): Configuration dictionary containing Spark
+            session parameters loaded from the configuration file.
         
-    Example:
-        >>> spark_conn = SparkConnector("local_spark")
-        >>> spark = spark_conn.create_spark_session()
+    Examples:
+        >>> connector = SparkConnector("local_spark")
+        >>> spark_session = connector.create_spark_session()
+        >>> df = spark_session.sql("SELECT 1 as test")
+        
+        >>> # For production use
+        >>> prod_connector = SparkConnector("docker_spark")
+        >>> prod_spark = prod_connector.create_spark_session()
     """
+    
     def __init__(self, config_name):
-        """
-        Initialize SparkConnector with configuration from specified database section.
+        """Initialize SparkConnector with configuration.
+        
+        Loads Spark configuration from the specified section in the
+        configuration file.
         
         Args:
-            config_name (str): Section name in config .ini file containing Spark configuration
+            config_name (str): Section name in config.ini file containing
+                Spark configuration parameters (e.g., "local_spark", 
+                "docker_spark").
+                
+        Raises:
+            Exception: If the configuration section is not found in the
+                configuration file.
         """
         self.spark_config = load_config(filename=CONFIG_PATH, section=config_name)
 
     @logger.log_errors(logger)
     def create_spark_session(self):
-        """
-        Create and configure a Spark session with the loaded configurations.
+        """Create and configure a Spark session.
+        
+        Creates a new Spark session using the loaded configuration parameters.
+        Automatically includes Kafka packages for stream processing capabilities.
         
         Returns:
-            SparkSession: Configured Spark session instance.
+            SparkSession: Configured Spark session instance ready for use.
             
         Note:
-            The method includes Kafka package for Spark-Kafka integration.
+            The session includes the Kafka connector package for streaming
+            operations. Additional configurations from the config file are
+            automatically applied to the session.
         """
         # Create Spark session
         builder = SparkSession.builder.appName(self.spark_config.get("spark.app.name", "SparkApp")) \
@@ -60,25 +93,46 @@ class SparkConnector:
         return spark
     
 class PostgresConnector:
-    """
-    A connector class for managing PostgreSQL database connections.
+    """PostgreSQL database connector with batch processing capabilities.
     
-    This class provides methods to establish connections to a PostgreSQL database
-    using configurations loaded from a database.ini file.
+    Provides a high-level interface for PostgreSQL database operations
+    including connection management, table creation, and efficient batch
+    data insertion with upsert capabilities.
     
     Attributes:
-        db_config (dict): Configuration dictionary loaded from database.ini file
+        db_config (dict): Database configuration parameters loaded from config file.
+        engine (sqlalchemy.Engine): SQLAlchemy engine instance for database connections.
+        test_mode (bool): Flag indicating whether to use test environment connections.
+        insert_batch_size (int): Default batch size for bulk insert operations.
         
-    Example:
-        >>> pg_conn = PostgresConnector("docker_postgres")
-        >>> conn = pg_conn.conn_postgres()
+    Examples:
+        >>> connector = PostgresConnector("docker_postgres", test_mode=False)
+        >>> connector.create_table(create_table_sql="CREATE TABLE test (...)")
+        >>> connector.insert_record("test", records_df, if_exists='append')
+        
+        >>> # Test mode with smaller batches
+        >>> test_connector = PostgresConnector("postgres_test", 
+        ...                                   test_mode=True, 
+        ...                                   insert_batch_size=1000)
     """
-    def __init__(self, config_name, test_mode= False, insert_batch_size=100_000):
-        """
-        Initialize PostgresConnector with configuration from specified database section.
+    
+    def __init__(self, config_name, test_mode=False, insert_batch_size=100_000):
+        """Initialize PostgresConnector with database configuration.
+        
+        Sets up the database connector with configuration parameters and
+        establishes connection settings for the specified environment.
         
         Args:
-            config_name (str): Section name in config.ini file containing PostgreSQL configuration
+            config_name (str): Section name in config.ini containing PostgreSQL
+                configuration (e.g., "docker_postgres", "local_postgres").
+            test_mode (bool, optional): Whether to use test environment settings.
+                When True, uses 'host_out' and 'port_out' for connections.
+                Defaults to False (production mode with 'host_in', 'port_in').
+            insert_batch_size (int, optional): Default batch size for bulk
+                operations. Defaults to 100,000 records per batch.
+                
+        Raises:
+            Exception: If the configuration section is not found.
         """
         self.db_config = load_config(filename=CONFIG_PATH, section=config_name)
         self.engine = None
@@ -87,11 +141,20 @@ class PostgresConnector:
 
     @logger.log_errors(logger)
     def get_engine(self):
-        """
-        Get or create SQLAlchemy engine for PostgreSQL connection.
+        """Get or create SQLAlchemy engine for database connections.
+        
+        Creates a database engine with connection pooling if one doesn't exist.
+        Uses different connection parameters based on test_mode setting.
         
         Returns:
-            Engine: SQLAlchemy engine instance.
+            sqlalchemy.Engine: SQLAlchemy engine instance configured for
+                PostgreSQL connections.
+                
+        Note:
+            The engine is created only once and reused for subsequent calls.
+            Connection parameters vary based on test_mode:
+            - test_mode=True: Uses host_out and port_out (external access)
+            - test_mode=False: Uses host_in and port_in (internal access)
         """
         if self.engine is None:
             if self.test_mode:
