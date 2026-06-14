@@ -46,7 +46,7 @@ Remote Kafka → Kafka2Kafka → Local Kafka → Kafka2Mongo → MongoDB
 ## 📁 Project Structure
 
 ```
-Le_Son_LV2_Project_01/
+kafka-streaming-pipeline/
 ├── pipeline.py          # Main pipeline implementation
 ├── utils.py            # Custom Logger with decorators
 ├── config.py           # Configuration loader utility

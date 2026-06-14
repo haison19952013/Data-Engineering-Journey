@@ -7,7 +7,7 @@ __pycache__/
 *.json
 *.BIN
 *.zip
-Le_Son_LV1_Project_056/data/*.csv
+gcp-mongodb-pipeline/data/*.csv
 
 # .init files
 *.ini
