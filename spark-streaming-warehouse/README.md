@@ -39,7 +39,7 @@ User Behavior Data → Kafka Topic → Spark Streaming → Data Processing & Tra
 
 ### 📁 Project Structure
 ```
-Le_Son_LV2_Project_02/
+spark-streaming-warehouse/
 ├── README.md                    # Project documentation
 ├── requirements.txt             # Python dependencies
 ├── data_model.png              # Database schema diagram
@@ -171,9 +171,9 @@ Verify all services are accessible, ensure Kafka topics exist, and review the co
 ### 🔧 Pipeline Execution
 
 #### Option 1: Docker Deployment (Recommended)
--  Prerequisites: Make sure you are in the Le_Son_LV2_Project_02 directory
+-  Prerequisites: Make sure you are in the spark-streaming-warehouse directory
 ```bash
-cd /path/to/Data-Engineering-Journey/Le_Son_LV2_Project_02
+cd /path/to/Data-Engineering-Journey/spark-streaming-warehouse
 ```
 
 - **Quick Health Check** (Optional but recommended):
@@ -224,7 +224,7 @@ spark-submit \
 
 ```bash
 # Install Python dependencies
-cd Le_Son_LV2_Project_02
+cd spark-streaming-warehouse
 pip install -r requirements.txt
 
 # Run warmup pipeline (initialize database schema)
@@ -296,7 +296,7 @@ docker exec -it postgres-container psql -U your_username -d your_database -c "SE
 ```bash
 # Clone repository
 git clone <repository-url>
-cd Data-Engineering-Journey/Le_Son_LV2_Project_02
+cd Data-Engineering-Journey/spark-streaming-warehouse
 
 # Set up Python environment
 python -m venv venv

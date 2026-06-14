@@ -18,7 +18,7 @@ crontab -e
 ```
 Step 2: Add the cron job schedule, then save and exit
 ```
-0 8 * * * /bin/bash -c 'source /home/sonhaile/miniconda3/etc/profile.d/conda.sh && conda activate data_engineering && cd /home/sonhaile/Data-Engineering-Journey/warm_up && python data_pipeline.py' >> /home/sonhaile/cron_log.txt 2>&1
+0 8 * * * /bin/bash -c 'source /home/sonhaile/miniconda3/etc/profile.d/conda.sh && conda activate data_engineering && cd /home/sonhaile/Data-Engineering-Journey/data-wrangling-warmup && python data_pipeline.py' >> /home/sonhaile/cron_log.txt 2>&1
 ````
 Note: Install the a simple MTA like `postfix` to send email to the user's mailbox (in this case, for generating the `cronlog.txt`). 
 ```
@@ -31,7 +31,7 @@ crontab -l
 ```
 Step 4: test the cron job
 ```
-source /home/sonhaile/miniconda3/etc/profile.d/conda.sh && conda activate data_engineering && cd /home/sonhaile/Data-Engineering-Journey/warm_up && python data_pipeline.py
+source /home/sonhaile/miniconda3/etc/profile.d/conda.sh && conda activate data_engineering && cd /home/sonhaile/Data-Engineering-Journey/data-wrangling-warmup && python data_pipeline.py
 ```
 3. Error handling for common errors of `DataPipeline()` in `data_pipeline.py`: 
 - `wrangle_data()` -> File not found

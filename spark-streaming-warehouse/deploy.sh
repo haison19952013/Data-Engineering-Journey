@@ -47,7 +47,7 @@ check_prerequisites() {
     
     # Check if we're in the correct directory
     if [[ ! -f "requirements.txt" ]] || [[ ! -d "streaming_pipeline" ]]; then
-        print_error "Please run this script from the Le_Son_LV2_Project_02 directory."
+        print_error "Please run this script from the spark-streaming-warehouse directory."
         exit 1
     fi
     

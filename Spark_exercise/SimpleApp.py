@@ -1,7 +1,9 @@
 """SimpleApp.py"""
+from pathlib import Path
+
 from pyspark.sql import SparkSession
 
-logFile = "/home/sonhaile/Data-Engineering-Journey/Le_Son_LV2_Project_01/README.md"  # Should be some file on your system
+logFile = str(Path(__file__).resolve().parents[1] / "kafka-streaming-pipeline" / "README.md")
 spark = SparkSession.builder.appName("SimpleApp").getOrCreate()
 logData = spark.read.text(logFile).cache()
 
