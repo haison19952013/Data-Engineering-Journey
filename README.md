@@ -23,10 +23,14 @@ This repository is a professional portfolio of hands-on data engineering project
 
 ## Repository structure
 
-- `installation_guide/` – setup notes and lab materials for Kafka, Spark, Airflow, and PostgreSQL
-- `Python_PostgreSQL/` and `python-exception/` – foundational Python practice for database access and error handling
-- `sql-case-when-exercises/` and `Spark_exercise/` – focused exercises for SQL and Spark concepts
-- `Python_course/` – early Python learning materials and assignments
+- `installation-guide/` – setup notes and lab materials for Kafka, Spark, Airflow, and PostgreSQL
+- `python-postgresql/` and `python-exception/` – foundational Python practice for database access and error handling
+- `sql-case-when-exercises/` and `spark-exercise/` – focused exercises for SQL and Spark concepts
+- `python-course/` – early Python learning materials and assignments
+- `python-postgresql-labs/` – lab exercises for scraping and storing data with PostgreSQL
+- `bee-movies-sql-project/` – SQL analysis of the DVD rental dataset
+- `tmdb-pandas-data-cleaning/` – Pandas-based cleaning and analysis of the TMDb movies dataset
+- `extra-data/` – shared datasets used across projects
 
 ## Summary
 
