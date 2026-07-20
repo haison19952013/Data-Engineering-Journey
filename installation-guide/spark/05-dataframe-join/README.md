@@ -1,21 +1,21 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directories:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/dataframe-join/d1
 docker exec -ti spark-spark-worker-1 mkdir -p /data/dataframe-join/d2
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/dataframe-join
 ```
 
-**Copy file từ host vào trong container:**
+**Copy files from host into the container:**
 
 ```shell
 for f in 05-dataframe-join/data/d1/*.json; do docker cp $f spark-spark-worker-1:/data/dataframe-join/d1/; done
@@ -25,7 +25,7 @@ for f in 05-dataframe-join/data/d1/*.json; do docker cp $f spark-spark-worker-1:
 for f in 05-dataframe-join/data/d2/*.json; do docker cp $f spark-spark-worker-1:/data/dataframe-join/d2/; done
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop dataframe-join || true &&
@@ -37,15 +37,15 @@ docker run -ti --name dataframe-join \
 unigap/spark:3.5 spark-submit /spark/05-dataframe-join/dataframe_join.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình lấy ra danh sách các chuyến bay bị hủy tới thành phố Atlanta, GA trong năm 2000
+Write a program to retrieve a list of cancelled flights to Atlanta, GA in the year 2000.
 
-Dữ liệu sắp theo theo ngày bay giảm dần.
+Sort the data by flight date in descending order.
 
-Ví dụ kết quả:
+Expected result:
 
 | id         | DEST | DEST_CITY_NAME | FL_DATE    | ORIGIN | ORIGIN_CITY_NAME   | CANCELLED |
 |------------|------|----------------|------------|--------|--------------------|-----------|
@@ -62,13 +62,13 @@ Ví dụ kết quả:
 | 8589938393 | ATL  | Atlanta, GA    | 2000-12-01 | LGA    | New York, NY       | 1         |
 | 8589938370 | ATL  | Atlanta, GA    | 2000-12-01 | LAS    | Las Vegas, NV      | 1         |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình lấy ra danh sách các destination, năm và tổng số chuyến bay bị hủy của năm đó.
+Write a program to retrieve a list of destinations, year, and the total number of cancelled flights for that year.
 
-Dữ liệu sắp xếp theo mã destination và theo năm.
+Sort the data by destination code and then by year.
 
-Ví dụ kết quả:
+Expected result:
 
 | DEST | FL_YEAR | NUM_CANCELLED_FLIGHT |
 |------|---------|----------------------|

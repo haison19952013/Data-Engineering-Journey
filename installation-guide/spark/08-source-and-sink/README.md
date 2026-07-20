@@ -1,26 +1,26 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directory:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/source-and-sink
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/source-and-sink
 ```
 
-**Copy file từ host vào trong container:**
+**Copy file from host into the container:**
 
 ```shell
 docker cp 08-source-and-sink/data/flight-time.parquet spark-spark-worker-1:/data/source-and-sink/
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop source-and-sink || true &&
@@ -35,16 +35,15 @@ unigap/spark:3.5 spark-submit \
 /spark/08-source-and-sink/source_and_sink.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình đọc dữ liệu từ thư mục `json` tạo được trong ví dụ trên và lấy ra danh sách các chuyến bay bị hủy tới
-thành phố Atlanta, GA trong năm 2000
+Write a program to read data from the `json` directory created in the example above and retrieve a list of cancelled flights to Atlanta, GA in the year 2000.
 
-Dữ liệu sắp theo theo ngày bay giảm dần.
+Sort the data by flight date in descending order.
 
-Ví dụ kết quả:
+Expected result:
 
 | DEST | DEST_CITY_NAME | FL_DATE    | ORIGIN | ORIGIN_CITY_NAME     | CANCELLED |
 |------|----------------|------------|--------|----------------------|-----------|
@@ -57,14 +56,13 @@ Ví dụ kết quả:
 | ATL  | Atlanta, GA    | 2000-01-01 | BHM    | Birmingham, AL       | 1         |
 | ATL  | Atlanta, GA    | 2000-01-01 | PIT    | Pittsburgh, PA       | 1         |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình đọc dữ liệu từ thư mục `avro` tạo được trong ví dụ trên và lấy ra danh sách các hãng
-bay `OP_CARRIER`, `ORIGIN` và số chuyến bay bị hủy
+Write a program to read data from the `avro` directory created in the example above and retrieve a list of airlines `OP_CARRIER`, `ORIGIN`, and the number of cancelled flights.
 
-Dữ liệu sắp theo theo `OP_CARRIER` và `ORIGIN`.
+Sort the data by `OP_CARRIER` and then by `ORIGIN`.
 
-Ví dụ kết quả:
+Expected result:
 
 | OP_CARRIER | ORIGIN | NUM_CANCELLED_FLIGHT |
 |------------|--------|----------------------|

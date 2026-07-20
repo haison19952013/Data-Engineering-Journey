@@ -1,27 +1,25 @@
 ## Overview
 
-Trong phần này, chúng ta sẽ thử viết 1 plugin và sử dụng plugin này trong dag.
+In this section, we will write a plugin and use it inside a DAG.
 
-## 1. Viết plugin `user_report_hook`
+## 1. Write the `user_report_hook` plugin
 
-`user_report_hook` viết 1 plugin đơn giản trong đó khai báo `UserReportHook`. Hook này chứa hàm `report` sẽ tạo
-bảng `user_reports` và insert dữ liệu vào bảng này thông qua việc thử sụng thư viện `psycopg` để giao tiếp với postgres.
+`user_report_hook` is a simple plugin that declares `UserReportHook`. This hook contains a `report` function that creates the `user_reports` table and inserts data into it using the `psycopg` library to communicate with Postgres.
 
-Tiếp theo tạo cấu trúc thư mục và copy file `user_report_hook.py` vào trong thư
-mục [plugins](../00-setup/airflow/plugins) theo cấu trúc như sau: `plugins/hooks/user/user_report_hook.py`
+Next, create the directory structure and copy the `user_report_hook.py` file to the [plugins](../00-setup/airflow/plugins) directory following this structure: `plugins/hooks/user/user_report_hook.py`.
 
-## 2. Sử dụng hook trong dag
+## 2. Use the hook in a DAG
 
-Dag `user_reporting` sẽ import `UserReportHook` và gọi hàm `report` trong task.
+The `user_reporting` DAG will import `UserReportHook` and call the `report` function inside a task.
 
-## 3. Khai báo và bật dag trên giao diện
+## 3. Declare and enable the DAG in the UI
 
-Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags`. Tiếp theo, bật dag này trên giao diện web.
+Overwrite the `user_processing.py` file in the `dags` directory. Then enable the DAG in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAG from the UI.
 
-## 4. Kiểm tra kết quả
+## 4. Check the result
 
-Kết quả trong bảng `user_reports` cho thấy bảng đã được tạo và dữ liệu được insert:
+The result in the `user_reports` table shows that the table has been created and data has been inserted:
 
 ![](img/user_reports.png)

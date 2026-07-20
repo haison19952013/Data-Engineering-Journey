@@ -1,4 +1,4 @@
-# spark-exercise
+# Apache Spark Exercises
 
 A focused Spark exercise using PySpark's standalone application API.
 

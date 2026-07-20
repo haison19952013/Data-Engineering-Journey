@@ -1,32 +1,30 @@
 ## Overview
 
-Trong các phần trước, chúng ta thấy mặc định tất cả các tasks trong dag đều được thực thi.
+In previous sections, we saw that by default all tasks in a DAG are executed.
 
-Phần này, chúng ta sẽ sử dụng kỹ thuật `branching` để rẽ nhánh việc thực thi tasks (chọn 1 hoặc nhiều nhánh thay vì thực
-thi toàn bộ).
+In this section, we will use `branching` to conditionally execute tasks (choosing one or more branches instead of executing all of them).
 
-## 1. Bổ sung `branching` vào `user_processing` dag
+## 1. Add `branching` to the `user_processing` DAG
 
-Ta sẽ sửa logic của `user_processing` như sau:
+We will modify the logic of `user_processing` as follows:
 
-- Task `extract_user` sẽ lấy 1 user ở vị trí ngẫu nhiên trong danh sách user trả về và push user này vào XCom
-- Thêm task `is_valid_user` để kiểm tra tuổi của user. Nếu user có tuổi > 30 thì sẽ được bỏ qua không xử lý, còn lại sẽ
-  xử lý như logic của các phần trước
+- The `extract_user` task will randomly select a user from the returned list and push that user to XCom.
+- Add the `is_valid_user` task to check the user's age. If the user is older than 30, they will be skipped; otherwise, the processing logic from previous sections will apply.
 
-## 2. Khai báo và bật dag trên giao diện
+## 2. Declare and enable the DAG in the UI
 
-Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags` và bật dag này trên giao diện web.
+Overwrite the `user_processing.py` file in the `dags` directory and enable the DAG in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAG from the UI.
 
-## 3. Kiểm tra kết quả
+## 3. Check the result
 
-Thực hiện chạy dag nhiều lần, bạn sẽ thấy kết quả pipeline chạy sẽ phụ thuộc vào user thu được ở bước extract.
+Run the DAG multiple times and you will see that the pipeline result depends on the user retrieved in the extract step.
 
-Trường hợp user có tuổi > 30:
+When the user is older than 30:
 
 ![](img/invalid_user.png)
 
-Trường hợp còn lại:
+Otherwise:
 
 ![](img/valid_user.png)

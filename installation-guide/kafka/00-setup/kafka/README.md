@@ -1,6 +1,6 @@
 ## Overview
 
-Hướng dẫn này giúp bạn cài đặt một cụm Kafka gồm 3 nodes sử dụng docker có mô hình như sau:
+This guide helps you set up a Kafka cluster with 3 nodes using Docker, with the following architecture:
 
 ![](img/kafka-containers.png)
 

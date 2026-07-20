@@ -1,6 +1,6 @@
 ## Overview
 
-Hướng dẫn này giúp bạn cài đặt một cụm Spark gồm 1 master và 2 workers sử dụng docker có mô hình như sau:
+This guide helps you set up a Spark cluster with 1 master and 2 workers using Docker, with the following architecture:
 
 ![](img/spark-containers.png)
 

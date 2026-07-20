@@ -1,26 +1,26 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directory:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/window-function
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/window-function
 ```
 
-**Copy file từ host vào trong container:**
+**Copy file from host into the container:**
 
 ```shell
 docker cp 06-window-function/data/summary.parquet spark-spark-worker-1:/data/window-function/
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop window-function || true &&
@@ -32,16 +32,15 @@ docker run -ti --name window-function \
 unigap/spark:3.5 spark-submit /spark/06-window-function/window_function.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình lấy ra danh sách các quốc gia, tuần, số hóa đơn, tổng số sản phẩm, tổng giá trị hóa đơn và xếp hạng
-theo tiêu chí tổng số tiền nhiều nhất trên từng quốc gia
+Write a program to retrieve a list of countries, week number, number of invoices, total quantity, total invoice value, and rank by highest total invoice value per country.
 
-Dữ liệu sắp theo tên quốc gia và xếp hạng tăng dần.
+Sort the data by country name and rank in ascending order.
 
-Ví dụ kết quả:
+Expected result:
 
 | Country   | WeekNumber | NumInvoices | TotalQuantity | InvoiceValue | rank |
 |-----------|------------|-------------|---------------|--------------|------|
@@ -54,14 +53,13 @@ Ví dụ kết quả:
 | Belgium   | 50         | 2           | 285           | 625.16       | 2    |
 | Belgium   | 48         | 1           | 528           | 346.1        | 3    |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình lấy ra danh sách các quốc gia, tuần, số hóa đơn, số sản phẩm, giá trị hóa đơn và tổng giá trị hóa đơn
-tính tính đến tuần của bản ghi hiện tại, phần trăm tăng của giá trị hóa đơn so với tuần trước đó.
+Write a program to retrieve a list of countries, week number, number of invoices, total quantity, invoice value, cumulative invoice value up to the current week, and the percentage growth in invoice value compared to the previous week.
 
-Dữ liệu sắp xếp theo tên quốc gia, tuần.
+Sort the data by country name and week number.
 
-Ví dụ kết quả:
+Expected result:
 
 | Country   | WeekNumber | NumInvoices | TotalQuantity | InvoiceValue | PercentGrowth | AccumulateValue |
 |-----------|------------|-------------|---------------|--------------|---------------|-----------------|

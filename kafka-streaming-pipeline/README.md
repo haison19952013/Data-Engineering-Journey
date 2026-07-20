@@ -1,4 +1,4 @@
-# Le Son LV2 Project 01 - Kafka Streaming Pipeline
+# Kafka Streaming Pipeline
 
 ## 📋 Project Overview
 

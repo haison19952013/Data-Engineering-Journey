@@ -1,13 +1,12 @@
 ## Overview
 
-Trong phần này, chúng ta sẽ sử dụng `PostgresHook` để load data trong file `.csv` vào bảng trong db postgres
+In this section, we will use `PostgresHook` to load data from a `.csv` file into a table in the Postgres database.
 
-## 1. Tạo postgres connection
+## 1. Create a Postgres connection
 
+Go to the web interface under `Admin > Connections` and select `Add a new record`:
 
-Truy cập vào web interface mục `Admin > Connections` chọn `Add a new record`:
-
-Bạn khai báo connection của db postgres như sau:
+Declare the Postgres database connection as follows:
 
 ```
 - conn_id: postgres
@@ -20,51 +19,49 @@ Bạn khai báo connection của db postgres như sau:
   conn_extra:
 ```
 
-Kết quả như sau:
+The result should look like this:
 
 ![](img/postgres-connection.png)
 
-## 2. Khai báo task tạo bảng
+## 2. Declare the table creation task
 
-Tiếp theo, chúng ta khai báo task `create_table` sử dụng `SQLExecuteQueryOperator`. Task này sẽ thực thi câu lệnh sql
-tạo bảng.
+Next, declare the `create_table` task using `SQLExecuteQueryOperator`. This task will execute the SQL statement to create the table.
 
-Xem trong file `user_processing.py`.
+See `user_processing.py`.
 
-## 3. Khai báo task load data vào bảng
+## 3. Declare the data loading task
 
-Tiếp theo, khai báo task `store_user` sử dụng `PostgresHook`. Task này sẽ load data trong file `.csv` vào bảng `users`
-đã tạo được ở task `create_table`.
+Next, declare the `store_user` task using `PostgresHook`. This task will load data from the `.csv` file into the `users` table created in the `create_table` task.
 
-Xem trong file `user_processing.py`.
+See `user_processing.py`.
 
-## 4. Khai báo và bật dag trên giao diện
+## 4. Declare and enable the DAG in the UI
 
-Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags` và bật dag này trên giao diện web.
+Overwrite the `user_processing.py` file in the `dags` directory and enable the DAG in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAG from the UI.
 
-## 5. Kiểm tra kết quả
+## 5. Check the result
 
-Sau khi dag chạy thành công, bảng `users` sẽ được tạo trong db và dữ liệu sẽ được load từ file `.csv` vào bảng này.
+After the DAG runs successfully, the `users` table will be created in the database and data will be loaded from the `.csv` file into this table.
 
-Để kiểm tra dữ liệu trong bảng `users` của db postgres, chạy các lệnh sau:
+To verify the data in the `users` table in the Postgres database, run the following commands:
 
-Exec vào trong `postgres` container
+Exec into the `postgres` container:
 
-**Lưu ý: ** thay tên container bằng container trên máy của bạn
+**Note:** Replace the container name with the corresponding container on your machine.
 
 ```
 docker exec -ti airflow-postgres-1 bash
 ```
 
-Tiếp theo, connect db sử dụng `psql`
+Next, connect to the database using `psql`:
 
 ```
 psql -U airflow -d airflow
 ```
 
-Truy vấn bảng users
+Query the users table:
 
 ```
 select * from users;
@@ -72,6 +69,6 @@ select * from users;
 
 ![](img/users.png)
 
-## Kết luận
+## Conclusion
 
-Chúc mừng bạn, vậy là sau phần này bạn đã tạo và chạy thành công 1 data pipeline trên `airflow`.
+Congratulations! After completing this section, you have successfully created and run a data pipeline on `airflow`.

@@ -9,7 +9,7 @@ alpine:3.14 \
 /bin/sh -c "apk add --no-cache netcat-openbsd && nc -lk 9999"
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop structured-streaming || true &&
@@ -22,24 +22,24 @@ unigap/spark:3.5 spark-submit \
 /spark/10-structured-streaming/structured_streaming.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình đếm từ và in ra danh sách các từ có số lần xuất hiện là chẵn.
+Write a program to count words and print a list of words that appear an even number of times.
 
-Ví dụ kết quả:
+Expected result:
 
 | word | count |
 |------|-------|
 | x    | 2     |
 | y    | 4     |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình đếm từ và in ra danh sách các từ có độ dài lớn hơn 1 và có số lần xuất hiện là lẻ.
+Write a program to count words and print a list of words with a length greater than 1 that appear an odd number of times.
 
-Ví dụ kết quả:
+Expected result:
 
 | word | count |
 |------|-------|

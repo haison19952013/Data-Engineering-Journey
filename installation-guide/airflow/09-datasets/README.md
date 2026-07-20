@@ -1,52 +1,51 @@
 ## Overview
 
-Trong phần này, chúng ta sẽ sử dụng `datasets` để chia `user_processing` dag thành 2 dag:
+In this section, we will use `datasets` to split the `user_processing` DAG into two DAGs:
 
-- DAG thứ nhất sẽ extract, process user và cập nhật vào datasets
-- DAG thứ 2 sẽ lắng nghe thay đổi trên dataset và thực hiện lưu trữ vào trong database
+- The first DAG will extract and process users, then update the dataset.
+- The second DAG will listen for changes on the dataset and store the data in the database.
 
-## 1. Khai báo dag `user_processing`
+## 1. Declare the `user_processing` DAG
 
-Chúng ta sẽ sửa lại dag `user_processing` để thực hiện các task vụ sau:
+We will update the `user_processing` DAG to perform the following tasks:
 
-- Get dữ liệu từ rest api
-- Xử lý dữ liệu và lưu xuống file `.csv` (datasets)
+- Fetch data from the REST API.
+- Process the data and save it to a `.csv` file (dataset).
 
-## 2. Khai báo dag `user_storing`
+## 2. Declare the `user_storing` DAG
 
-Dag này sẽ lắng nghe thay đổi trên datasets (file `.csv`) và thực hiện các task vụ sau:
+This DAG will listen for changes on the dataset (the `.csv` file) and perform the following tasks:
 
-- Tạo bảng `users` trong database
-- Lưu trữ dữ liệu vào bảng `users`
+- Create the `users` table in the database.
+- Store the data into the `users` table.
 
-## 3. Khai báo và bật dag trên giao diện
+## 3. Declare and enable the DAGs in the UI
 
-Ghi đè (overwrite) file `user_processing.py` và copy file `user_stroing` vào trong thư mục `dags`. Tiếp theo, bật 2 dags
-này trên giao diện web.
+Overwrite the `user_processing.py` file and copy the `user_storing` file to the `dags` directory. Then enable both DAGs in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAGs from the UI.
 
-## 4. Kiểm tra kết quả
+## 4. Check the result
 
-Bạn sẽ thấy 2 dags chạy thành công và có giao diện graph như sau:
+You will see both DAGs run successfully with the following graph views:
 
-Kết quả dag `user_processing`:
+Result for the `user_processing` DAG:
 
 ![](img/user_processing.png)
 
-dag `user_storing`:
+Result for the `user_storing` DAG:
 
 ![](img/user_storing.png)
 
-## 5. Yêu cầu
+## 5. Exercise
 
-Hãy thêm 1 dag `user_reporting` thực hiện nhiệm vụ sau:
+Add a `user_reporting` DAG that performs the following tasks:
 
-- Lắng nghe thay đổi trên datasets table `users`
-- Thực hiện tạo bảng `user_reports`
-- Truy vấn bảng `users` và lưu report vào bảng `user_reports`
+- Listens for changes on the `users` table dataset.
+- Creates the `user_reports` table.
+- Queries the `users` table and saves the report to the `user_reports` table.
 
-Bảng `user_reports` lưu thông tin số người dùng theo giới tính. Ví dụ:
+The `user_reports` table stores the number of users by gender. For example:
 
 | gender | num_users |
 |--------|-----------|

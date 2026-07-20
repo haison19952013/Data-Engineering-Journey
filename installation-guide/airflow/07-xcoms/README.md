@@ -1,30 +1,26 @@
 ## Overview
 
-Trong phần pipeline `user_processing`, chúng ta có sử dụng đoạn code `ti.xcom_pull(task_ids="extract_user")`. Hàm này
-thực hiện pull dữ liệu từ XComs ra. Về cơ bản XComs giống như kênh giao tiếp và truyền tải dữ liệu giữa các tasks của
-airlfow.
+In the `user_processing` pipeline, we used the code `ti.xcom_pull(task_ids="extract_user")`. This function pulls data from XComs. Essentially, XComs act as a communication channel for passing data between Airflow tasks.
 
-Phần này chúng ta sẽ thực hành về XComs bằng việc viết lại task `extract_user` của `user_processing`. Thay vì sử
-dụng `HttpOperator` thì chúng ta sẽ tự viết lại bằng `PythonOpertor` kết hợp với XComs.
+In this section, we will practice XComs by rewriting the `extract_user` task in `user_processing`. Instead of using `HttpOperator`, we will rewrite it using `PythonOperator` combined with XComs.
 
-## 1. Viết lại task `extract_user`
+## 1. Rewrite the `extract_user` task
 
-Chúng ta sẽ viết lại task `extract_user` bằng `PythonOperator`
+We will rewrite the `extract_user` task using `PythonOperator`:
 
-- Sử dụng thư viện `requests` để call rest api
-- Sử dụng XComs để gửi response của rest api từ task `extract_user` sang task `process_user` thông qua push/pull
+- Use the `requests` library to call the REST API.
+- Use XComs to pass the REST API response from the `extract_user` task to the `process_user` task via push/pull.
 
-## 2. Khai báo và bật dag trên giao diện
+## 2. Declare and enable the DAG in the UI
 
-Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags` và bật dag này trên giao diện web.
+Overwrite the `user_processing.py` file in the `dags` directory and enable the DAG in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAG from the UI.
 
-## 3. Kiểm tra kết quả
+## 3. Check the result
 
-Bạn sẽ thấy kết quả pipeline vẫn chạy thành công như các phần trước.
+You will see that the pipeline still runs successfully as in previous sections.
 
-Tại task `extract_user` phần `XCom` trên giao diện web, bạn sẽ thấy dữ liệu response của rest api được lưu tại
-key `users`
+In the `XCom` section of the `extract_user` task in the web UI, you will see the REST API response data stored at the key `users`.
 
 ![](img/xcoms.png)

@@ -1,4 +1,4 @@
-# sql-case-when-exercises
+# SQL CASE WHEN Exercises
 
 Exercises focused on SQL `CASE WHEN` expressions using a college football dataset.
 
