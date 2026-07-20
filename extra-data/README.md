@@ -1,4 +1,4 @@
-# extra-data
+# Supplementary Data Resources
 
 Supplementary dataset used across projects in this repository.
 

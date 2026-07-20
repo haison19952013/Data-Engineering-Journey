@@ -1,4 +1,4 @@
-# bee-movies-sql-project
+# Bee Movies SQL Analysis Project
 
 A SQL project using the DVD Rental dataset to practice database querying and data analysis.
 

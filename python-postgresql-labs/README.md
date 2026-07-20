@@ -1,4 +1,4 @@
-# python-postgresql-labs
+# Python PostgreSQL Labs
 
 Practical lab exercises for working with PostgreSQL using Python, covering data scraping, database operations, and end-to-end pipeline construction.
 

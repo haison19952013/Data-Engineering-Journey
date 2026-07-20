@@ -1,4 +1,4 @@
-# Welcome to my DBT data project
+# DBT Analytics Project
 
 ## How to build the data models
 

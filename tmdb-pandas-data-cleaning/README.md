@@ -1,4 +1,4 @@
-# tmdb-pandas-data-cleaning
+# TMDb Pandas Data Cleaning
 
 Pandas-based data cleaning and analysis of the TMDb (The Movie Database) movies dataset.
 

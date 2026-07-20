@@ -1,4 +1,4 @@
-# python-course
+# Python Fundamentals Course
 
 Early Python learning materials and programming assignments covering foundational data structures and string manipulation.
 

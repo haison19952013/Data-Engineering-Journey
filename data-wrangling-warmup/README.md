@@ -1,4 +1,4 @@
-# Warm up with Data Engineering
+# Data Engineering Warm-Up Exercises
 ## Data cleanup and transformation
 1. Chuẩn hóa cột salary về dạng số, xử lý các giá trị như "Thoả thuận", "Trên X triệu", "X - Y triệu", "Tới X triệu", etc. -> `def wrangle_salary()` in `data_pipeline.py`
 2. Tạo thêm các cột phụ: min_salary, max_salary, salary_unit (VND/USD) -> `def wrangle_salary()` in `data_pipeline.py`

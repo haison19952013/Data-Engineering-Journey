@@ -1,4 +1,4 @@
-# python-postgresql
+# Python PostgreSQL Integration
 
 Hands-on examples of connecting Python to PostgreSQL using `psycopg2`.
 
