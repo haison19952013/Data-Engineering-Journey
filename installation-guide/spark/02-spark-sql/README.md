@@ -1,26 +1,26 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directory:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/spark-sql
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/
 ```
 
-**Copy file từ host vào trong container:**
+**Copy file from host into the container:**
 
 ```shell
 docker cp 02-spark-sql/data/survey.csv spark-spark-worker-1:/data/spark-sql
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop spark-sql || true &&
@@ -32,17 +32,17 @@ docker run -ti --name spark-sql \
 unigap/spark:3.5 spark-submit /spark/02-spark-sql/spark_sql.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình sử dụng `Spark SQL` lấy ra danh sách các quốc gia và số người là nam có độ tuổi < 40.
+Write a program using `Spark SQL` to retrieve a list of countries and the number of male respondents under 40 years old.
 
-Một người là nam thì trường `Gender` sẽ có giá trị là `male` hoặc `m` (lưu ý không phân biệt viết hoa/thường).
+A person is male if the `Gender` field has a value of `male` or `m` (case-insensitive).
 
-Dữ liệu sắp xếp theo số người tăng dần. Nếu số người bằng nhau thì sắp xếp theo tên quốc gia.
+Sort the data by count in ascending order. If the count is equal, sort by country name.
 
-Ví dụ kết quả:
+Expected result:
 
 | Country | Count |
 |---------|-------|
@@ -51,19 +51,17 @@ Ví dụ kết quả:
 | Italy   | 7     |
 | Sweden  | 7     |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình sử dụng `Spark SQL` lấy ra danh sách quốc gia và số nam, nữ của từng quốc gia.
+Write a program using `Spark SQL` to retrieve a list of countries along with the number of male and female respondents per country.
 
-Một người là nam thì trường `Gender` sẽ có giá trị là `male` hoặc `man` hoặc `m` (lưu ý không phân biệt viết
-hoa/thường).
+A person is male if the `Gender` field has a value of `male`, `man`, or `m` (case-insensitive).
 
-Một người là nữ thì trường `Gender` sẽ có giá trị là `female` hoặc `woman` hoặc `w` (lưu ý không phân biệt viết
-hoa/thường).
+A person is female if the `Gender` field has a value of `female`, `woman`, or `w` (case-insensitive).
 
-Dữ liệu sắp xếp theo tên quốc gia.
+Sort the data by country name.
 
-Ví dụ kết quả:
+Expected result:
 
 | Country | num_male | num_female |
 |---------|----------|------------|

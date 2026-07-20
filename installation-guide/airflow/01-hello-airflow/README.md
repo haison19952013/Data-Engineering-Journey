@@ -1,16 +1,16 @@
 ## Overview
 
-Hướng dẫn cách tạo và chạy một dag đơn giản trên `airflow`
+This guide explains how to create and run a simple DAG on `airflow`.
 
-## 1. Thêm file .py vào thư mục `dags`
+## 1. Add the .py file to the `dags` directory
 
-Copy file `hello_airflow.py` vào thư mục `dags` trong `airflow` mà bạn đã cài đặt được.
+Copy the `hello_airflow.py` file to the `dags` directory in the `airflow` installation you set up.
 
-## 2. Bật dag trên giao diện
+## 2. Enable the DAG in the UI
 
-Sau khi add file `.py` vào thư mục `dags`, bạn vào giao diện của airflow và thấy `hello_airflow` đã được cập nhật
-vào danh sách dags
+After adding the `.py` file to the `dags` directory, open the Airflow UI and you will see that `hello_airflow` has been
+added to the list of DAGs.
 
 ![](./img/hello_airflow.png)
 
-Tiếp theo hãy bật dag `hello_airflow` lên và quan sát ...
+Next, enable the `hello_airflow` DAG and observe the results...

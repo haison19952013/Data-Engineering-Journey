@@ -1,26 +1,26 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directory:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/udf
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/udf
 ```
 
-**Copy file từ host vào trong container:**
+**Copy file from host into the container:**
 
 ```shell
 docker cp 07-udf/data/survey.csv spark-spark-worker-1:/data/udf/
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop udf || true &&
@@ -33,15 +33,15 @@ docker run -ti --name udf \
 unigap/spark:3.5 spark-submit --py-files /spark/07-udf/my_util.zip /spark/07-udf/udf.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình lấy ra danh sách các bản ghi có số lượng employees lớn hơn hoặc bằng 500
+Write a program to retrieve all records where the number of employees is greater than or equal to 500.
 
-Gợi ý: viết 1 hàm udf để xử lý dữ liệu trên cột `no_employees`
+Hint: Write a UDF to process data on the `no_employees` column.
 
-Ví dụ kết quả:
+Expected result:
 
 | Age | Gender | Country        | state | no_employees   |
 |-----|--------|----------------|-------|----------------|

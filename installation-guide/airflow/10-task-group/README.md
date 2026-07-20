@@ -1,41 +1,37 @@
 ## Overview
 
-Trong phần này, chúng ta sẽ sử dụng kỹ thuật `task_groups` trong dag `user_processing` để xử lý lấy dữ liệu trên nhiều
-pages của api get users.
+In this section, we will use the `task_groups` technique in the `user_processing` DAG to handle fetching data from multiple pages of the get-users API.
 
-## 1. Sửa lại dag `user_processing`
+## 1. Update the `user_processing` DAG
 
-Chúng ta sẽ sửa lại dag `user_processing` để giải quyết các yêu cầu sau:
+We will update the `user_processing` DAG to address the following requirements:
 
-- Get dữ liệu từ nhiều pages của api get users
-- Với mỗi page sẽ xử lý và lưu xuống 1 file `.csv`
-- Load các file `.csv` đã tạo vào bảng `users`
+- Fetch data from multiple pages of the get-users API.
+- For each page, process the data and save it to a separate `.csv` file.
+- Load all generated `.csv` files into the `users` table.
 
-## 2. Khai báo và bật dag trên giao diện
+## 2. Declare and enable the DAG in the UI
 
-Ghi đè (overwrite) file `user_processing.py` vào trong thư mục `dags`. Tiếp theo, bật dag này trên giao diện web.
+Overwrite the `user_processing.py` file in the `dags` directory. Then enable the DAG in the web UI.
 
-Thực hiện chạy dag trên giao diện.
+Run the DAG from the UI.
     
-## 3. Kiểm tra kết quả
+## 3. Check the result
 
-Bạn sẽ thấy dag mới có giao diện graph như sau:
+You will see the new DAG with a graph view like this:
 
 ![](img/dag_graph.png)
 
-Như vậy là chúng ta đã tạo thành công 3 task_group tương ứng cho 3 page của từng phần `user_processing` cũng
-như `user_storing`.
+We have successfully created 3 task groups corresponding to 3 pages for each of the `user_processing` and `user_storing` sections.
 
-Kiểm tra file `.csv` sẽ thấy có 3 file tương ứng với 3 pages:
+Checking the `.csv` files, you will see 3 files corresponding to the 3 pages:
 
 ![](img/csv.png)
 
-Kết quả trong bảng `users` cũng cho thấy dữ liệu được insert đủ 3 pages:
+The result in the `users` table also shows that data has been inserted from all 3 pages:
 
 ![](img/users_table.png)
 
-## 4. Yêu cầu
+## 4. Exercise
 
-Sử dụng kỹ thuật `task_group` và `datasets`, hãy tách dag `user_processing` trong phần trên thành 2 dags riêng
-biệt `user_processing` và `user_storing` (như trong bài [09-datasets](../09-datasets)) để xử lý dữ liệu trên 3 pages của
-api get users.
+Using the `task_group` and `datasets` techniques, split the `user_processing` DAG above into two separate DAGs — `user_processing` and `user_storing` (as in [09-datasets](../09-datasets)) — to process data across 3 pages of the get-users API.

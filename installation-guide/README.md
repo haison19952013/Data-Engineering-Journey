@@ -1,11 +1,11 @@
 # DE Coaching LAB
 
-Project này chứa các source code, tutorials của bài lab liên quan đến khóa học.
+This project contains source code and tutorials for the lab exercises related to the course.
 
 ## 1. Kafka
 
-Thư mục chứa hướng dẫn cài đặt và các bài lab cho module kafka.
+Directory containing installation guides and lab exercises for the Kafka module.
 
 ## 2. Spark
 
-Thư mục chứa hướng dẫn cài đặt và các bài lab cho module spark.
+Directory containing installation guides and lab exercises for the Spark module.

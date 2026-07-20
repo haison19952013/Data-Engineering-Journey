@@ -1,9 +1,9 @@
 # Data Engineering Warm-Up Exercises
 ## Data cleanup and transformation
-1. Chuẩn hóa cột salary về dạng số, xử lý các giá trị như "Thoả thuận", "Trên X triệu", "X - Y triệu", "Tới X triệu", etc. -> `def wrangle_salary()` in `data_pipeline.py`
-2. Tạo thêm các cột phụ: min_salary, max_salary, salary_unit (VND/USD) -> `def wrangle_salary()` in `data_pipeline.py`
-3. Xử lý cột address để tách thành city và district -> `def wrangle_address()` in `data_pipeline.py`
-4. Chuẩn hóa job_title để gom nhóm các vị trí tương tự (ví dụ: "Software Engineer", "Developer", "Programmer" có thể gom vào một nhóm) -> `def wrangle_job_title()` in `data_pipeline.py`
+1. Normalize the salary column to a numeric format, handling values such as "Negotiable", "Over X million", "X - Y million", "Up to X million", etc. -> `def wrangle_salary()` in `data_pipeline.py`
+2. Create additional derived columns: min_salary, max_salary, salary_unit (VND/USD) -> `def wrangle_salary()` in `data_pipeline.py`
+3. Process the address column to split it into city and district -> `def wrangle_address()` in `data_pipeline.py`
+4. Normalize job_title to group similar positions (e.g., "Software Engineer", "Developer", "Programmer" can be grouped together) -> `def wrangle_job_title()` in `data_pipeline.py`
 
 ## Data pipeline
 1. Basic ETL design: .csv extraction, transformation, and loading into a database -> class `data_pipeline()` in `data_pipeline.py` w/ the flow: `data_wrangle()` -> `db_conn()` -> `save_to_db()`

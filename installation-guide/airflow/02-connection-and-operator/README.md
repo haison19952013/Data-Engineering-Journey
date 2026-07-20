@@ -1,15 +1,15 @@
 ## Overview
 
-Phần hướng dẫn này bao gồm:
+This guide covers:
 
-- Cách tạo một `http connection` trên airflow
-- Sử dụng connection này trong `http operator` để get dữ liệu từ một rest api
+- How to create an `http connection` in Airflow
+- Using that connection in an `http operator` to fetch data from a REST API
 
-## 1. Tạo http connection
+## 1. Create an HTTP connection
 
-Truy cập vào web interface mục `Admin > Connections` chọn `Add a new record`:
+Go to the web interface under `Admin > Connections` and select `Add a new record`:
 
-Điền thông tin http connection như sau:
+Fill in the HTTP connection details as follows:
 
 ```
 - conn_id: user_api
@@ -22,17 +22,17 @@ Truy cập vào web interface mục `Admin > Connections` chọn `Add a new reco
   conn_extra:
 ```
 
-Kết quả thu được như sau:
+The result should look like this:
 
 ![](img/http-connection.png)
 
-## 2. Tạo http operator
+## 2. Create an HTTP operator
 
-Khai báo dag và http operator như trong file [user_processing.py](user_processing.py). Lưu ý ` http_conn_id='user_api'`
-chính là `conn_id` đã set ở bước tạo connection
+Declare the DAG and HTTP operator as shown in the file [user_processing.py](user_processing.py). Note that `http_conn_id='user_api'`
+corresponds to the `conn_id` set in the connection creation step above.
 
-Tiếp theo bạn thêm file này vào trong thư mục `dags` và bật trên giao diện tương tự như bài tập `hello-airflow`.
+Next, add this file to the `dags` directory and enable it in the UI, similar to the `hello-airflow` exercise.
 
-Tại phần logs của task instance, bạn sẽ thấy response được in ra như sau:
+In the logs of the task instance, you will see the response printed as follows:
 
 ![](img/http-response.png)

@@ -19,11 +19,11 @@ docker compose logs postgres -f -n 100
 
 ## 3. Monitor
 
-Truy cập vào địa chỉ của `adminer` và nhập caác thông tin của `postgres` (Xem `environment` trong `docker-compose.yml`).
+Access the `adminer` address and enter the `postgres` connection details (see `environment` in `docker-compose.yml`).
 
 [adminer](http://localhost:8380)
 
-**Lưu ý:** `Adminer` chỉ là công cụ kết nối đến db, bạn có thể dùng công cụ khác thay thế như `pgAdmin`, `DBeaver`, ...
+**Note:** `Adminer` is just a database connection tool; you can use other tools such as `pgAdmin`, `DBeaver`, etc.
 
 ## References
 

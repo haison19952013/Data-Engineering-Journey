@@ -1,62 +1,59 @@
-# Yêu cầu dự án
+# Project Requirements
 
 ## Overview
 
-Bài toán kết hợp việc sử dụng `kafka` và `spark`. Sử dụng `spark` đọc dữ liệu từ `kafka` sau đó xử lý, tính toán và lưu
-trữ vào db `postgres`
+This project combines the use of `kafka` and `spark`. It uses `spark` to read data from `kafka`, then process, compute, and store the results in a `postgres` database.
 
-## Bài toán
+## Problem Statement
 
-**Đầu vào:**
+**Input:**
 
-- Kafka: Cụm `Kafka` setup ở dưới local và `topic` chứa dữ liệu về hành vi người dùng trên website đã làm trong project
-  của module `Kafka`
-- Spark: Cụm `Spark` cài đặt dưới local trong khóa học
-- Schema của dữ liệu
+- Kafka: A `Kafka` cluster set up locally with a `topic` containing user behavior data on a website, as built in the `Kafka` module project.
+- Spark: A `Spark` cluster installed locally during the course.
+- The data schema.
 
-**Đầu ra:**
+**Output:**
 
-- Thiết kế db
-- Chương trình code xử lý yêu cầu của dự án
-- Kết quả của các báo cáo theo yêu cầu
-- Dữ liệu được lưu trong database `Postgres`
+- Database design.
+- Code to process the project requirements.
+- Results of the required reports.
+- Data stored in the `Postgres` database.
 
-## Mô tả
+## Description
 
-**Schema của dữ liệu đầu vào:**
+**Input data schema:**
 
-| Tên          | Kiểu dữ liệu  | Mô tả                                                   | Ví dụ                                                                                                                                                               |
-|--------------|---------------|---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| id           | String        | Log id                                                  | aea4b823-c5c6-485e-8b3b-6182a7c4ecce                                                                                                                                |
-| api_version  | String        | Version của api                                         | 1.0                                                                                                                                                                 | 
-| collection   | String        | Loại log                                                | view_product_detail                                                                                                                                                 | 
-| current_url  | String        | Url của trang web mà người dùng đang vào                | https://www.glamira.cl/glamira-anillo-saphira-skug100335.html?alloy=white-375&diamond=sapphire&stone2=diamond-Brillant&itm_source=recommendation&itm_medium=sorting |
-| device_id    | String        | id của thiết bị                                         | 874db849-68a6-4e99-bcac-fb6334d0ec80                                                                                                                                |
-| email        | String        | Email của người dùng                                    |                                                                                                                                                                     |
-| ip           | String        | Địa chỉ ip                                              | 190.163.166.122                                                                                                                                                     |
-| local_time   | String        | Thời gian log được tạo. Format dạng yyyy-MM-dd HH:mm:ss | 2024-05-28 08:31:22                                                                                                                                                 |
-| option       | Array<Object> | Danh sách các option của sản phẩm                       | `[{"option_id": "328026", "option_label": "diamond"}]`                                                                                                              |
-| product_id   | String        | Mã id của sản phẩm                                      | 96672                                                                                                                                                               |
-| referrer_url | String        | Đường dẫn web dẫn đến link `current_url`                | https://www.google.com/                                                                                                                                             |
-| store_id     | String        | Mã id của cửa hàng                                      | 85                                                                                                                                                                  |
-| time_stamp   | Long          | Timestamp thời điểm bản ghi log được tạo                |                                                                                                                                                                     |
-| user_agent   | String        | Thông tin của browser, thiết bị                         | Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1                           |
+| Name         | Data Type     | Description                                          | Example                                                                                                                                                             |
+|--------------|---------------|------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| id           | String        | Log ID                                               | aea4b823-c5c6-485e-8b3b-6182a7c4ecce                                                                                                                                |
+| api_version  | String        | API version                                          | 1.0                                                                                                                                                                 | 
+| collection   | String        | Log type                                             | view_product_detail                                                                                                                                                 | 
+| current_url  | String        | URL of the web page the user is visiting             | https://www.glamira.cl/glamira-anillo-saphira-skug100335.html?alloy=white-375&diamond=sapphire&stone2=diamond-Brillant&itm_source=recommendation&itm_medium=sorting |
+| device_id    | String        | Device ID                                            | 874db849-68a6-4e99-bcac-fb6334d0ec80                                                                                                                                |
+| email        | String        | User email address                                   |                                                                                                                                                                     |
+| ip           | String        | IP address                                           | 190.163.166.122                                                                                                                                                     |
+| local_time   | String        | Log creation time. Format: yyyy-MM-dd HH:mm:ss       | 2024-05-28 08:31:22                                                                                                                                                 |
+| option       | Array<Object> | List of product options                              | `[{"option_id": "328026", "option_label": "diamond"}]`                                                                                                              |
+| product_id   | String        | Product ID                                           | 96672                                                                                                                                                               |
+| referrer_url | String        | Web URL that referred to the `current_url`           | https://www.google.com/                                                                                                                                             |
+| store_id     | String        | Store ID                                             | 85                                                                                                                                                                  |
+| time_stamp   | Long          | Timestamp when the log record was created            |                                                                                                                                                                     |
+| user_agent   | String        | Browser and device information                       | Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1                           |
 
-**Yêu cầu:**
+**Requirements:**
 
-Thiết kế db và viết chương trình đưa ra các báo cáo như sau:
+Design the database and write a program to produce the following reports:
 
-- Top 10 `product_id` có lượt view cao nhất trong ngày hiện tại
-- Top 10 quốc gia có lượt view cao nhất trong ngày hiện tại (quốc gia được lấy dựa vào `domain`)
-- Top 5 `referrer_url` có lượt view cao nhất trong ngày hiện tại
-- Với 1 quốc gia bất kỳ, lấy ra danh sách các `store_id` và lượt view tương ứng, sắp xếp theo lượt view
-  giảm dần
-- Dữ liệu view phân bổ theo giờ của một `product_id` bất kỳ trong ngày
-- Dữ liệu view theo giờ của từng `browser`, `os`
+- Top 10 `product_id`s with the highest number of views for the current day.
+- Top 10 countries with the highest number of views for the current day (country is determined from the `domain`).
+- Top 5 `referrer_url`s with the highest number of views for the current day.
+- For any given country, retrieve the list of `store_id`s and their corresponding view counts, sorted by views in descending order.
+- View data distributed by hour for any given `product_id` on a given day.
+- Hourly view data for each `browser` and `os`.
 
-## Phụ lục
+## Appendix
 
-**Cách chạy chương trình sử dụng thư viện ngoài thông qua virtual env**
+**How to run the program with external libraries using a virtual environment**
 
 ```
 (cd 99-project && zip -r browser.zip browser/*) &&
@@ -81,7 +78,7 @@ spark-submit \
 /spark/99-project/test.py"
 ```
 
-## Link tham khảo
+## References
 
 [Python Package Management](https://spark.apache.org/docs/latest/api/python/user_guide/python_packaging.html)
 

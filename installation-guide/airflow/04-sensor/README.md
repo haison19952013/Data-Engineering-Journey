@@ -1,21 +1,17 @@
 ## Overview
 
-Trong phần này, chúng ta sẽ bổ sung thêm http sensor. Sensor này có vai trò kiểm tra xem rest api có hoạt động không
-trước khi xử lý các bước tiếp theo.
+In this section, we will add an HTTP sensor. This sensor checks whether the REST API is available before proceeding to subsequent steps.
 
-## 1. Khai báo sensor
+## 1. Declare the sensor
 
-Khai báo thêm `http sensor` như trong file `user_processing.py`.
+Add the `http sensor` as shown in the `user_processing.py` file.
 
-Tiếp theo bạn ghi đè (overwrite) file này vào trong thư mục `dags` và bật dag này trên giao diện web.
+Next, overwrite this file in the `dags` directory and enable the DAG in the web UI.
 
-## 2. Kiểm tra
+## 2. Verify
 
-Chúng ta thấy dag vẫn sẽ chạy đúng và ghi kết quả ra file `.csv` giống như trong phần trước. Bới vì endpoint `users/` set
-trong `HttpSensor` đang hợp lệ.
+We can see that the DAG still runs correctly and writes results to the `.csv` file, just as in the previous section — because the `users/` endpoint set in `HttpSensor` is valid.
 
-Bây giờ bạn hãy thử đổi endpoint `users` thành endpoint không hợp lệ (vd: `users1`) trong `HttpSensor`. Sau đó quan sát sự
-thay đổi trên giao diện web. Bạn sẽ thấy `HttpSensor` sẽ ở trạng thái `running` vì nó liên tục check xem endpoint có
-available không. Và các task phía sau như `extract_user` và `process_user` sẽ không được chạy.
+Now try changing the `users` endpoint to an invalid one (e.g., `users1`) in `HttpSensor`. Then observe the change in the web UI. You will see that `HttpSensor` stays in a `running` state because it continuously checks whether the endpoint is available. Subsequent tasks such as `extract_user` and `process_user` will not be executed.
 
 ![](img/http-sensor.png)

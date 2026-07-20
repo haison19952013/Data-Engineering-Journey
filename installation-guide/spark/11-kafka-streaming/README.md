@@ -1,6 +1,6 @@
-## 1. Kiểm tra kết nối tới Kafka server
+## 1. Check connectivity to the Kafka server
 
-Kiểm tra kết nối tới 3 brokers
+Check connectivity to the 3 brokers:
 
 ```shell
 telnet HOST1 PORT1
@@ -8,9 +8,9 @@ telnet HOST2 PORT2
 telnet HOST3 PORT3 
 ```
 
-Trong đó thông tin về `HOST`, `PORT` sẽ được gửi sau.
+The `HOST` and `PORT` information will be provided separately.
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop kafka-streaming || true &&
@@ -27,17 +27,17 @@ unigap/spark:3.5 spark-submit \
 /spark/11-kafka-streaming/kafka_streaming.py
 ```
 
-Trong đó các thông tin về `HOST`, `PORT` và `USERNAME`, `PASSWORD` sẽ được gửi sau.
+The `HOST`, `PORT`, `USERNAME`, and `PASSWORD` information will be provided separately.
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình chuyển đổi cột `value` dạng `json` string về dạng `row` có cấu trúc và in ra kết quả convert được.
+Write a program to convert the `value` column from a `json` string into a structured `row` format and print the converted result.
 
-Gợi ý: Sử dụng `StructType` và hàm `from_json`
+Hint: Use `StructType` and the `from_json` function.
 
-Ví dụ kết quả:
+Expected result:
 
 | id                                   | time_stamp | ip             | user_agent                                                                                                                                     | resolution | device_id                            | api_version | store_id | local_time          | show_recommendation | current_url                                                                                                                                                                                   | referrer_url                                                                                                     | email_address | collection                    | product_id | option                                                                                                                                                                     |
 |--------------------------------------|------------|----------------|------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------------------------------------|-------------|----------|---------------------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|---------------|-------------------------------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

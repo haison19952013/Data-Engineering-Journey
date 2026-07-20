@@ -1,4 +1,4 @@
-Tại thư mục `spark`, chạy lệnh sau:
+From the `spark` directory, run the following commands:
 
 ## Remove any existing container named hello-spark
 ```shell

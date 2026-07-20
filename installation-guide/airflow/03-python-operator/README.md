@@ -1,45 +1,43 @@
 ## Overview
 
-Phần này hướng dẫn bạn khai báo task bằng việc sử dụng `PythonOperator`.
+This section guides you through declaring tasks using the `PythonOperator`.
 
-`PythonOperator` giúp bạn khai báo 1 task và task này sẽ thực thi một hàm mà bạn define trong python.
+The `PythonOperator` allows you to declare a task that executes a Python function you define.
 
-## 1. Khai báo task
+## 1. Declare a task
 
-Chúng ta sẽ khai báo task `process_user`, task này sẽ gọi hàm `_process_user` để xử lý response trả về của rest api. Kết
-quả xử lý được lưu xuống file `.csv`.
+We will declare the `process_user` task, which calls the `_process_user` function to process the response returned by the REST API. The processed result is saved to a `.csv` file.
 
-Kết quả như trong file `user_processing.py`.
+See the result in the `user_processing.py` file.
 
-**Lưu ý:** Có thể bạn sẽ thắc mắc đoạn code `ti.xcom_pull(task_ids="extract_user")`. Đây là khái niệm về `Xcoms` và
-chúng ta sẽ tìm hiểu ở phần sau nha!
+**Note:** You may wonder about the code snippet `ti.xcom_pull(task_ids="extract_user")`. This relates to the concept of `XComs`, which we will cover in a later section.
 
-Tiếp theo bạn ghi đè (overwrite) file này vào trong thư mục `dags` và bật dag này trên giao diện web.
+Next, overwrite this file in the `dags` directory and enable the DAG in the web UI.
 
-## 2. Kiểm tra kết quả
+## 2. Check the result
 
-Kiểm tra kết quả trong file `.csv`.
+Check the result in the `.csv` file.
 
-Exec vào trong `airflow-scheduler` container
+Exec into the `airflow-scheduler` container:
 
-**Lưu ý:** thay container's name bằng container tương ứng trên máy của bạn.
+**Note:** Replace the container name with the corresponding container on your machine.
 
 ```
 docker exec -ti airflow-airflow-worker-1 bash
 ```
 
-Xem nội dung file `.csv`
+View the contents of the `.csv` file:
 
 ```
 cat /tmp/processed_user.csv
 ```
 
-Kết quả như sau:
+The result should look like this:
 
 ![](img/processed_user.png)
 
-## 3. Yêu cầu
+## 3. Exercise
 
-Sửa hàm `_process_user` để xử lý toàn bộ danh sách users trả về thay vì chỉ xử lý user đầu tiên.
+Modify the `_process_user` function to process the full list of users returned instead of only the first user.
 
-Kiểm tra kết quả trong file `.csv` thu được.
+Check the result in the generated `.csv` file.

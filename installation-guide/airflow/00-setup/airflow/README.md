@@ -1,6 +1,6 @@
 ## Overview
 
-Hướng dẫn này giúp bạn cài đặt Airflow bằng Docker
+This guide helps you install Airflow using Docker.
 
 ## 1. Create network & Build docker image
 **Create network**
@@ -19,25 +19,25 @@ docker build -t unigap/airflow:2.10.4 .
 
 ### 2.1 Setting the right Airflow user
 
-Tạo các thư mục sau: `dags`, `logs`, `plugins`, `config`
+Create the following directories: `dags`, `logs`, `plugins`, `config`
 
 ```shell
 mkdir -p ./dags ./logs ./plugins ./config
 ```
 
-Lấy thông tin user id sử dụng lệnh sau:
+Retrieve the user ID using the following command:
 
 ```shell
 id -u
 ```
 
-và group id của group `docker` sử dụng lệnh sau:
+And the group ID of the `docker` group using:
 
 ```shell
 getent group docker
 ```
 
-Set thông tin thu được vào 2 biến `AIRFLOW_UID` và `DOCKER_GID` trong file `.env`
+Set the retrieved values into the `AIRFLOW_UID` and `DOCKER_GID` variables in the `.env` file.
 
 ### 2.2 Initialize airflow.cfg
 
@@ -57,7 +57,7 @@ docker compose up airflow-init
 docker compose up -d
 ```
 
-Lệnh này sẽ start các docker containers sau:
+This command will start the following Docker containers:
 
 airflow-scheduler - The scheduler monitors all tasks and dags, then triggers the task instances once their dependencies
 are complete.

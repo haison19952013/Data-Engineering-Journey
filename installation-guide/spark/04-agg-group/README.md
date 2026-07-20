@@ -1,26 +1,26 @@
-## 1. Tạo thư mục và copy file vào trong spark docker
+## 1. Create directory and copy files into the Spark Docker container
 
-Tại thư mục `spark`, chạy các lệnh sau:
+From the `spark` directory, run the following commands:
 
-**Tạo thư mục:**
+**Create directory:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 mkdir -p /data/agg-group
 ```
 
-**Kiểm tra:**
+**Verify:**
 
 ```shell
 docker exec -ti spark-spark-worker-1 ls -la /data/
 ```
 
-**Copy file từ host vào trong container:**
+**Copy file from host into the container:**
 
 ```shell
 docker cp 04-agg-group/data/invoices.csv spark-spark-worker-1:/data/agg-group
 ```
 
-## 2. Chạy chương trình
+## 2. Run the program
 
 ```shell
 docker container stop agg-group || true &&
@@ -32,15 +32,15 @@ docker run -ti --name agg-group \
 unigap/spark:3.5 spark-submit /spark/04-agg-group/agg_group.py
 ```
 
-## 3. Yêu cầu
+## 3. Exercises
 
-### 3.1 Yêu cầu 1
+### 3.1 Exercise 1
 
-Viết chương trình lấy ra danh sách các quốc gia, năm, số hóa đơn, số lượng sản phẩm, tổng sô tiền của từng quốc gia và năm đó
+Write a program to retrieve a list of countries, year, number of invoices, total quantity, and total invoice value per country and year.
 
-Dữ liệu sắp xếp theo tên quốc gia và theo năm.
+Sort the data by country name and then by year.
 
-Ví dụ kết quả:
+Expected result:
 
 | Country   | Year | num_invoices | total_quantity | invoice_value      |
 |-----------|------|--------------|----------------|--------------------|
@@ -49,13 +49,13 @@ Ví dụ kết quả:
 | Austria   | 2010 | 2            | 3              | 257.03999999999996 |
 | Austria   | 2011 | 17           | 4824           | 9897.28            |
 
-### 3.2 Yêu cầu 2
+### 3.2 Exercise 2
 
-Viết chương trình lấy ra top 10 khách hàng có số tiền mua hàng nhiều nhất trong năm 2010
+Write a program to retrieve the top 10 customers with the highest total purchase amount in 2010.
 
-Dữ liệu sắp xếp theo số tiền giảm dần, nếu số tiền bằng nhau thì sắp xếp theo mã khách hàng tăng dần
+Sort the data by total amount in descending order. If the amounts are equal, sort by customer ID in ascending order.
 
-Ví dụ kết quả:
+Expected result:
 
 | CustomerID | invoice_value |
 |------------|---------------|
