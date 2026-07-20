@@ -24,7 +24,7 @@ This repository is a professional portfolio of hands-on data engineering project
 ## Repository structure
 
 - `installation_guide/` – setup notes and lab materials for Kafka, Spark, Airflow, and PostgreSQL
-- `Python_PostgreSQL/` and `Python_Exception/` – foundational Python practice for database access and error handling
+- `Python_PostgreSQL/` and `python-exception/` – foundational Python practice for database access and error handling
 - `sql-case-when-exercises/` and `Spark_exercise/` – focused exercises for SQL and Spark concepts
 - `Python_course/` – early Python learning materials and assignments
 
